@@ -7,11 +7,11 @@ import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 import BoidController from './boidScripts/BoidController'
 
 import { DragControls } from 'three/addons/controls/DragControls.js';
-import RAYS from './rayScripts/RaySphere'
+import RAYS from './rayCast/RaySphere'
 import Stats from 'three/addons/libs/stats.module.js';
 import Performance from './performance/Performance';
 
-import RayController from './rayScripts/RayController';
+import RayController from './rayCast/RayController';
 
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
 import CreateOctree from './octree/createOctree'
@@ -44,10 +44,10 @@ const canvas = document.querySelector('.webgl')
 //create scene
 const scene = new THREE.Scene()
 scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
-scene.fog = new THREE.Fog( scene.background, 1, 5000 );
+// scene.fog = new THREE.Fog( scene.background, 1, 10 );
 
-const axisHelper= new THREE.AxesHelper(0.3)
-scene.add(axisHelper)
+// const axisHelper= new THREE.AxesHelper(0.3)
+// scene.add(axisHelper)
 /**
  * Handle sizes and resize
  */
@@ -258,7 +258,10 @@ window.addEventListener('keydown',(e)=>
  * BOIDS
  */
 
-const boidController= new BoidController(200,sizes,scene,debug,gui,camera, matCapTexture)
+const boidController= new BoidController(10,sizes,scene,debug,gui,camera, matCapTexture)
+
+
+
 //#endregion
 
 
@@ -337,9 +340,9 @@ const tick =()=>
 
         past=slowTick
 
-        perform.timer('boid Update',true)
+        // perform.timer('boid Update',true)
         boidController.update(intersectingEvironmentObjects)
-        perform.timer('boid Update',true)
+        // perform.timer('boid Update',true)
 
         intersectingEvironmentObjects={}
 
