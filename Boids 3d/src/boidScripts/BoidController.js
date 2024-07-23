@@ -16,21 +16,26 @@ export default class BoidController
         this.camera=camera
         this.texture= texture
         this.global={}
-
-
         this.scene=scene
         this.sceneSize=debug.floorSize
-        startValues.sceneSize=this.sceneSize
+        this.gui=gui
 
-
-        this.boidLogic=new BoidLogic(count, sizes,startValues)
+        this.setBoidLogic(count)
         this.boidMeshes= []
         this.addMeshes(this.boidLogic.boidArray)
-
-
-        this.gui=gui
-        
         this.addControls()
+
+        // this.debug()
+
+    }
+
+    setBoidLogic(count)
+    {
+        const box= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(this.sceneSize,this.sceneSize,this.sceneSize))
+        const boxhelper= new THREE.Box3Helper(box)
+        this.scene.add(boxhelper)
+        // console.log(box)
+        this.boidLogic=new BoidLogic(count, box)
 
     }
 
@@ -174,28 +179,28 @@ export default class BoidController
 
 
 
-       const controlsFolder= boidsFolder.addFolder('Controls')
-        controlsFolder.add(startValues,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
-            this.boidLogic.cohesionFactor=num
-        })
-        controlsFolder.add(startValues,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
-            this.boidLogic.matchingFactor=num
-        })
-        controlsFolder.add(startValues,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
-            this.boidLogic.seperationFactor=num
-        })
-        controlsFolder.add(startValues,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
-            this.boidLogic.turnFactor=num/100
-        })
-        controlsFolder.add(startValues,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
-            this.boidLogic.minSpeed=num/100
-        })
-        controlsFolder.add(startValues,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
-            this.boidLogic.maxSpeed=num/100
-        })
-        controlsFolder.add(startValues,"wallTransparent").onChange((bool)=>{
-            this.boidLogic.wallTransparent=bool
-}) 
+    //    const controlsFolder= boidsFolder.addFolder('Controls')
+    //     controlsFolder.add(startValues,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
+    //         this.boidLogic.cohesionFactor=num
+    //     })
+    //     controlsFolder.add(startValues,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
+    //         this.boidLogic.matchingFactor=num
+    //     })
+    //     controlsFolder.add(startValues,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
+    //         this.boidLogic.seperationFactor=num
+    //     })
+    //     controlsFolder.add(startValues,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
+    //         this.boidLogic.turnFactor=num/100
+    //     })
+    //     controlsFolder.add(startValues,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+    //         this.boidLogic.minSpeed=num/100
+    //     })
+    //     controlsFolder.add(startValues,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+    //         this.boidLogic.maxSpeed=num/100
+    //     })
+    //     controlsFolder.add(startValues,"wallTransparent").onChange((bool)=>{
+    //         this.boidLogic.wallTransparent=bool
+// }) 
     }
 
     /**DEBUG
@@ -280,21 +285,4 @@ export default class BoidController
 /**
  * start options
  */
-
-const startValues=
-{
-    // transPadding : null,
-    // solidPadding : null,
-    visualRange:0.6,
-    protectedRange:0.2,
-    cohesionFactor:0.00206,
-    matchingFactor:0.09385,
-    seperationFactor:0.30332,
-    minSpeed:2.379,
-    maxSpeed:5.575   ,
-    wallTransparent:false,
-    turnFactor:0.201,
-    boidCount:null,
-    sceneSize:null,
-}
 
