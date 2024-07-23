@@ -1,7 +1,7 @@
 export default
 {
     floorHeight:-3,
-    roofHeight:15,
+    roofHeight:5,
 
     boids:{
         count:600,
