@@ -1,4 +1,5 @@
-import WorldValues from "../WorldValues";
+
+import boidConfig from "./boid.config";
 export default class BoidLogic
 {
     /**
@@ -10,67 +11,45 @@ export default class BoidLogic
      */
     constructor(boidCount,box)
     {
-        //world variables
-        // this.sizes=displaySizes
-        // this.sceneSize=size/2|| defaultValue(2,"sceneSize")
-        // this.minHeight= WorldValues.floorHeight
-        // this.maxHeight= WorldValues.roofHeight
-        // this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
-        this.solidPadding = defaultValue(1,"solidPadding");
-        // this.boundingBoxTransparent={
-        //     width : this.sizes.width + this.transPadding * 2,
-        //     height : this.sizes.height + this.transPadding * 2
-        // }
-        //TODO use a box three for the scene size?
-        this.boundingBoxSolid=box
         
-
+        this.boundingBox=box
+        
         //debuggable objects
-        //TODO fix this kak
-        const startValues={}
-        this.setUpTweakableValues(startValues)
+        this.setUpTweakableValues()
 
         //boid objects
-        this.boidCount=boidCount|| defaultValue(1,"boidCount")
-        this.boidArray=[]
-        this.addBoids(this.boidCount)
-        this.needsUpdate=false
-        
+        this.initBoids(boidCount)
         // console.log('success!')
     }
 
     setUpTweakableValues()
     {
-        this.visualRange=WorldValues.boids.visualRange || defaultValue(1,"VisualRange")
-        this.protectedRange=WorldValues.boids.protectedRange|| defaultValue(0.5,"protectedRange")
-        this.cohesionFactor=WorldValues.boids.cohesionFactor|| defaultValue(0.0039,"cohesionFactor")
-        this.matchingFactor=WorldValues.boids.matchingFactor|| defaultValue(0.0287,"matchingFactor")
-        this.seperationFactor=WorldValues.boids.seperationFactor|| defaultValue(0.01395,"seperationFactor")
-        this.minSpeed=WorldValues.boids.minSpeed/100|| defaultValue(0.005,"minSpeed")
-        this.maxSpeed=WorldValues.boids.maxSpeed/100  || defaultValue(0.01,"maxSpeed")
-        this.wallTransparent=WorldValues.boids.wallTransparent|| defaultValue(false,"wallTransparent")
-        this.turnFactor=WorldValues.boids.turnFactor/100|| defaultValue(0.2,"turnFactor")
-        this.objectAvoidFactor=WorldValues.boids.objectAvoidFactor|| defaultValue(2,"object avoid")
+        this.visualRange=boidConfig.values.visualRange              || defaultValue(1,"VisualRange")
+        this.protectedRange=boidConfig.values.protectedRange        || defaultValue(0.5,"protectedRange")
+        this.cohesionFactor=boidConfig.values.cohesionFactor        || defaultValue(0.0039,"cohesionFactor")
+        this.matchingFactor=boidConfig.values.matchingFactor        || defaultValue(0.0287,"matchingFactor")
+        this.seperationFactor=boidConfig.values.seperationFactor    || defaultValue(0.01395,"seperationFactor")
+        this.minSpeed=boidConfig.values.minSpeed/100                || defaultValue(0.005,"minSpeed")
+        this.maxSpeed=boidConfig.values.maxSpeed/100                || defaultValue(0.01,"maxSpeed")
+        this.wallTransparent=boidConfig.values.wallTransparent      || defaultValue(false,"wallTransparent")
+        this.turnFactor=boidConfig.values.turnFactor/100            || defaultValue(0.2,"turnFactor")
+        this.objectAvoidFactor=boidConfig.values.objectAvoidFactor  || defaultValue(2,"object avoid")
     }
 
-    //Update bounding box
-    // updateSolidBoundingBox(padding){
-    //     this.solidPadding=padding
-        
-    //     // this.boundingBoxSolid.top= this.sceneSize
-    //     // this.boundingBoxSolid.bottom=-this.sceneSize
-    //     // this.boundingBoxSolid.left= -this.sceneSize
-    //     // this.boundingBoxSolid.right= this.sizes.width
-        
-    // }
+    initBoids(boidCount)
+    {
+        this.boidCount=boidCount|| defaultValue(1,"boidCount")
+        this.boidArray=[]
+        this.addBoids(this.boidCount)
+    }
 
     //initial boid positions
     addBoids(count){
         for(let i = 0; i< count; i++)
             {   
-                const x= (Math.random()-0.5)*2*this.boundingBoxSolid.max.x
-                const y= (Math.random()-0.5)*2*this.boundingBoxSolid.max.y
-                const z= (Math.random()-0.5)*2*this.boundingBoxSolid.max.z
+                const x= (Math.random()-0.5)*2*this.boundingBox.max.x
+                const y= (Math.random()-0.5)*2*this.boundingBox.max.y
+                const z= (Math.random()-0.5)*2*this.boundingBox.max.z
 
                 const vx= (Math.random()-0.5)*2*this.maxSpeed
                 const vy= (Math.random()-0.5)*2*this.maxSpeed
@@ -91,9 +70,12 @@ export default class BoidLogic
     // updates the boids based on other boids and environment objects
     update(environmenObjects)
     {
-        // if(environmenObjects[0]){console.log(environmenObjects)}
+        const PROTECTED_RANGE_SQUARED= this.protectedRange**2
+        const VISUAL_RANGE_SQUARED = this.visualRange**2    
+
         this.boidArray.forEach((boid,i)=>
             {
+
                 //set up the rotation target
                 boid.targetX=boid.x
                 boid.targetY=boid.y
@@ -116,14 +98,13 @@ export default class BoidLogic
                         if(Math.abs(dx)<this.visualRange && Math.abs(dy)<this.visualRange&& Math.abs(dz)<this.visualRange)
                             {
                                 //get the distance between the two boids
-                                //FIXME: remove the sqrt check
-                                const distance= Math.sqrt(dx**2+dy**2+dz**2)
+                                const distanceSquared= dx**2+dy**2+dz**2
 
                                 //is the distance less than the protected range
-                                if(distance< this.protectedRange)
+                                if(distanceSquared< PROTECTED_RANGE_SQUARED)
                                     {
                                         //calculate the difference in x/y-coordinates to the nearfield boid
-                                        const exp=(1-(distance/this.protectedRange))**2
+                                        const exp=(1-(distanceSquared/PROTECTED_RANGE_SQUARED))**2
 
                                         accum.close_dx+=dx*exp 
                                         accum.close_dy+=dy*exp 
@@ -132,9 +113,9 @@ export default class BoidLogic
                                     }
                                 
                                 //if its not in the protected range, is it in the visual range?
-                                else if(distance<this.visualRange)
+                                else if(distanceSquared<VISUAL_RANGE_SQUARED)
                                     {
-                                        const exp=(1-(distance/this.visualRange))**2
+                                        const exp=(1-(distanceSquared/VISUAL_RANGE_SQUARED))**2
                                         //add other boids x/y coords and velocity variables to the accum
                                         accum.xpos_avg+=otherBoid.x
                                         accum.ypos_avg+=otherBoid.y
@@ -205,7 +186,6 @@ export default class BoidLogic
                 
                 //the bounding box
                 boid=(this.wallTransparent)?this.transparentWall(boid):this.solidWall(boid)
-                // boid=this.solidWall(boid)
                  
                 
                 // calculate boids speed
@@ -260,56 +240,39 @@ export default class BoidLogic
         return this.boidArray[0]
     }
 
-    // NOTE: could use a box3 to represent the bounding box
     solidWall(boid)
     {
-       
-        // console.log(this.boundingBoxSolid)
-        if(this.boundingBoxSolid.max.y<boid.y)
+
+        if(this.boundingBox.max.y<boid.y)  //top
             {
-                // console.log("top")
-                // console.log("bounding top")
                 boid.vy-=this.turnFactor
             }
         
-        if(this.boundingBoxSolid.max.x<boid.x)
+        if(this.boundingBox.max.x<boid.x)  //right
             {
-                // console.log("bounding left")
-                // console.log("right")
-
                 boid.vx-=this.turnFactor
             }
             
-        if(this.boundingBoxSolid.min.x>boid.x)
+        if(this.boundingBox.min.x>boid.x)  //left
             {
-                // console.log("bounding right")
-                // console.log("left")
-
                 boid.vx+=this.turnFactor
             }
         
-        if(this.boundingBoxSolid.min.y>boid.y)
+        if(this.boundingBox.min.y>boid.y)  //bottom
             {
-                // console.log("bounding bottom")
-                // console.log("bottom")
-
                 boid.vy+=this.turnFactor
             }
 
-        if(this.boundingBoxSolid.max.z<boid.z)
+        if(this.boundingBox.max.z<boid.z)  //front
             {
-                // console.log("bounding bottom")
-                // console.log("bottom")
-
                 boid.vz-=this.turnFactor
             }
-        if(this.boundingBoxSolid.min.z>boid.z)
-            {
-                // console.log("bounding bottom")
-                // console.log("bottom")
 
+        if(this.boundingBox.min.z>boid.z)  //back
+            {
                 boid.vz+=this.turnFactor
             }
+
         return boid
     }
 
@@ -323,11 +286,6 @@ export default class BoidLogic
         return boid
     }
 
-
-    // #region utils
-
-   
-    //#endregion
 }
 
 class Boid
