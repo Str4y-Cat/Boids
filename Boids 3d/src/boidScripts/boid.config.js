@@ -2,8 +2,8 @@ export default
 {
     values:{
         count:600,
-        visualRange:1.7523,
-        protectedRange:0.87892,
+        visualRange:0.75046,
+        protectedRange:0.38377,
         enviromentVision:2,
         objectAvoidFactor:0.222,
         cohesionFactor:0.00206,
