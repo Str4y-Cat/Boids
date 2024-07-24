@@ -13,15 +13,19 @@ export default class BoidLogic
     {
         
         this.boundingBox=box
+        // console.log(box.max.x*1)
         
         //debuggable objects
         this.setUpTweakableValues()
 
         //boid objects
         this.initBoids(boidCount)
-        // console.log('success!')
+        
     }
 
+    /**
+     * sets up the base values based on a config file
+     */
     setUpTweakableValues()
     {
         this.visualRange=boidConfig.values.visualRange              || defaultValue(1,"VisualRange")
@@ -36,6 +40,7 @@ export default class BoidLogic
         this.objectAvoidFactor=boidConfig.values.objectAvoidFactor  || defaultValue(2,"object avoid")
     }
 
+
     initBoids(boidCount)
     {
         this.boidCount=boidCount|| defaultValue(1,"boidCount")
@@ -43,8 +48,9 @@ export default class BoidLogic
         this.addBoids(this.boidCount)
     }
 
-    //initial boid positions
+
     addBoids(count){
+        
         for(let i = 0; i< count; i++)
             {   
                 const x= (Math.random()-0.5)*2*this.boundingBox.max.x
@@ -58,6 +64,7 @@ export default class BoidLogic
             }
     }
 
+    
     removeBoids(count)
     {
         while(count)
@@ -245,29 +252,27 @@ export default class BoidLogic
 
         if(this.boundingBox.max.y<boid.y)  //top
             {
+                // console.log(this.boundingBox)
                 boid.vy-=this.turnFactor
             }
+        if(this.boundingBox.min.y>boid.y)  //bottom
+        {
+            boid.vy+=this.turnFactor
+        }
         
         if(this.boundingBox.max.x<boid.x)  //right
             {
                 boid.vx-=this.turnFactor
             }
-            
         if(this.boundingBox.min.x>boid.x)  //left
             {
                 boid.vx+=this.turnFactor
             }
         
-        if(this.boundingBox.min.y>boid.y)  //bottom
-            {
-                boid.vy+=this.turnFactor
-            }
-
         if(this.boundingBox.max.z<boid.z)  //front
             {
                 boid.vz-=this.turnFactor
             }
-
         if(this.boundingBox.min.z>boid.z)  //back
             {
                 boid.vz+=this.turnFactor
@@ -278,10 +283,35 @@ export default class BoidLogic
 
     transparentWall(boid)
     {
-        if(boid.x>this.boundingBoxTransparent.width){boid.x=0}
-        if(boid.x<0){boid.x=this.boundingBoxTransparent.width}
-        if(boid.y>this.boundingBoxTransparent.height){boid.y=0}
-        if(boid.y<0){boid.y=this.boundingBoxTransparent.height}
+        if(this.boundingBox.max.y<boid.y)  //top
+            {
+                boid.y=this.boundingBox.min.y
+            }
+        
+        if(this.boundingBox.max.x<boid.x)  //right
+            {
+                boid.x=this.boundingBox.min.x
+            }
+            
+        if(this.boundingBox.min.x>boid.x)  //left
+            {
+                boid.x=this.boundingBox.max.x
+            }
+        
+        if(this.boundingBox.min.y>boid.y)  //bottom
+            {
+                boid.y=this.boundingBox.max.y
+            }
+
+        if(this.boundingBox.max.z<boid.z)  //front
+            {
+                boid.z=this.boundingBox.min.z
+            }
+
+        if(this.boundingBox.min.z>boid.z)  //back
+            {
+                boid.z=this.boundingBox.max.z
+            }
 
         return boid
     }
