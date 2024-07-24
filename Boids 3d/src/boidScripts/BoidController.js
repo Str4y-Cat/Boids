@@ -1,8 +1,16 @@
 import BoidLogic from "./BoidLogic";
+import boidConfig from "./boid.config";
 import * as THREE from 'three'
 
 export default class BoidController
 {
+
+    /**
+     *  
+     * 
+     * 
+     * 
+     */
 
     /** constructor()
      * 
@@ -13,86 +21,96 @@ export default class BoidController
      */
     constructor(count, sizes, scene,debug,gui,camera,texture)
     {
-        this.camera=camera
-        this.texture= texture
-        this.global={}
+        // this.camera=camera
+        // this.texture= texture
+        // this.global={}
         this.scene=scene
-        this.sceneSize=debug.floorSize
-        this.gui=gui
+        // this.sceneSize=debug.floorSize
+        // this.gui=gui
+
+        this.boundingBox= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(this.sceneSize,this.sceneSize,this.sceneSize))
+        this.boidMeshes= []
+        this.boidCount=null
+        
 
         this.setBoidLogic(count)
-        this.boidMeshes= []
-        this.addMeshes(this.boidLogic.boidArray)
-        this.addControls()
-
-        // this.debug()
 
     }
 
+    //#region boids
     setBoidLogic(count)
     {
-        const box= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(this.sceneSize,this.sceneSize,this.sceneSize))
-        const boxhelper= new THREE.Box3Helper(box)
-        this.scene.add(boxhelper)
-        // console.log(box)
-        this.boidLogic=new BoidLogic(count, box)
+        this.boidLogic=new BoidLogic(count, this.boundingBox)
+    }
 
+    setStandardMesh(geometry,material,rotateX=true)
+    {
+        //set global geometry
+        this.material= material
+        //set global material
+        this.geometry= geometry
+
+        if(rotateX){
+            geometry.rotateX(-Math.PI * 0.5);
+        }
+
+        //addMeshes()
+        this.addMeshes(this.boidLogic.boidArray)
     }
 
     addMeshes(arr)
     {
-        //create geometry
-        const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 
-        //create material
-        const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
-        geometry.rotateX(-Math.PI * 0.5);
-
+        if(!this.material)
+        {
+            console.log('No material has been set')
+            return
+        }
+        if(!this.geometry)
+        {
+            console.log('No geometry has been set')
+            return
+        }
+        
+       
         arr.forEach((boid) => {
-            this.boidMeshes.push(this.createMesh(boid,geometry,material))
+            this.createMesh(boid)
         });
 
-        this.global.boidCount=this.boidMeshes.length
+        this.boidCount=this.boidMeshes.length
+        
+        
+        
  
     }
 
-    createMesh({x,y,z}, geometry,material)
+    createMesh({x,y,z})
     {
-        const boidMesh= new THREE.Mesh(geometry,material)
-
+        const boidMesh= new THREE.Mesh(this.geometry,this.material)
         boidMesh.position.set(x,y,z)
-
-        // console.log()
         this.scene.add(boidMesh)
-        return boidMesh
+
+        this.boidMeshes.push(boidMesh)
     }
 
     removeMesh()
     {
-                const mesh= this.boidMeshes.pop()
+        const mesh= this.boidMeshes.pop()
 
-                this.scene.remove(mesh)
-                mesh.geometry.dispose()
-                mesh.material.dispose()
-
-            
+        this.scene.remove(mesh)
+        mesh.geometry.dispose()
+        mesh.material.dispose()     
     }
 
     addBoids(count)
     {
-        // console.log(`count is ${count}\nBefore pos: ${this.boidLogic.boidArray.length}\nBefore mesh: ${this.boidMeshes.length}`)
         this.boidLogic.addBoids(count)
         const iStart=this.boidLogic.boidArray.length-count
         const iEnd= this.boidLogic.boidArray.length
-        // console.log(iStart)
-        // console.log(iEnd)
+
         for(let i= iStart; i<iEnd;i++){
-            // console.log([this.boidLogic.boidArray[i]])
-            this.addMeshes([this.boidLogic.boidArray[i]])
+            this.createMesh([this.boidLogic.boidArray[i]])
         }
-        // console.log(`After pos: ${this.boidLogic.boidArray.length}\nAfter mesh: ${this.boidMeshes.length}`)
-
-
     }
 
     removeBoids(count)
@@ -113,6 +131,19 @@ export default class BoidController
         // this.boidLogic.needsUpdate=true
 
     }
+    //#endregion
+
+    //#region utils
+    follow(camera,index=0)
+    {
+        this.followBoid={}
+        
+        this.followBoid.index= index
+        this.camera= camera
+    }
+
+
+    //#endregion
 
     /** Update()
      * 
@@ -122,49 +153,67 @@ export default class BoidController
     update(environmenObjects)
     {
         
-
         this.boidLogic.update(environmenObjects)
 
         this.boidMeshes.forEach((boidMesh,i)=>
         {
-            // console.log(i)
-            // console.log(this.boidLogic.boidArray[i])
-            // console.log(this.boidLogic.boidArray)
             const boid= this.boidLogic.boidArray[i]
 
-            // console.log(boidMesh)
-            boidMesh.position.x=boid.x
-            boidMesh.position.y=boid.y
-            boidMesh.position.z=boid.z
-            // console.log(boid.z)
+            boidMesh.position.copy(boid)
+           
             boidMesh.lookAt(new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ))
-            
-
-            if(i==0&&this.debugHalos.protectedCircle)
-                {
-                    this.debugHalos.protectedCircle.position.copy( boidMesh.position)
-                    this.debugHalos.protectedCircle.lookAt(this.camera.position);
-                    // console.log(this.scene.children) 
-                    this.debugHalos.viewCircle.position.copy( boidMesh.position)
-                    this.debugHalos.viewCircle.lookAt(this.camera.position);
-
-                }
-
         })
+
+        if(this.debug)
+        {
+            if(this.debug.protectedRange)
+            {
+                this.debug.protectedRange.position.copy(this.boidMeshes[0].position)
+            }
+            if(this.debug.visualRange)
+                {
+                    this.debug.visualRange.position.copy(this.boidMeshes[0].position)
+                }
+        }
+
+        // if(this.followBoid)
+        // {
+        //     // const position= this.boidMeshes[this.followBoid.index].position.clone()
+        //     // this.camera.position.copy(position.multiplyScalar(2))
+        //     this.camera.lookAt(this.boidMeshes[this.followBoid.index].position)
+        // }
     }
 
+
+    //#region DEBUG
+    viewDebug(gui)
+    {
+        this.debug= {}
+        this.debug.boidCount= this.boidCount
+
+        //create a gui folder
+        this.debug.folder=  gui.addFolder("Boids")
+
+        //add count tweak
+        this.debugCount()
+        //parameters tweaks
+        this.debugValues()
+
+        this.debugSolidBorderBox()
+
+        this.debugVisionRange()
+    }
 
     /** addControls
      * 
      * adds gui controls
      * 
      */
-    addControls()
+    debugCount()
     {
-        // values.
-       const boidsFolder= this.gui.addFolder('Boids')
-        boidsFolder.add(this.global,'boidCount').step(1). min(0).max(3000).onChange((count)=>
+        this.debug.folder.add(this.debug,'boidCount'). min(1).max(1500).step(1).onChange((count)=>
         {
+            this.boidCount=count
             if(count>this.boidMeshes.length)
                 {
                     this.addBoids(count-this.boidMeshes.length)
@@ -175,110 +224,171 @@ export default class BoidController
                 }
         })
 
-
-
-
-
-    //    const controlsFolder= boidsFolder.addFolder('Controls')
-    //     controlsFolder.add(startValues,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
-    //         this.boidLogic.cohesionFactor=num
-    //     })
-    //     controlsFolder.add(startValues,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
-    //         this.boidLogic.matchingFactor=num
-    //     })
-    //     controlsFolder.add(startValues,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
-    //         this.boidLogic.seperationFactor=num
-    //     })
-    //     controlsFolder.add(startValues,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
-    //         this.boidLogic.turnFactor=num/100
-    //     })
-    //     controlsFolder.add(startValues,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
-    //         this.boidLogic.minSpeed=num/100
-    //     })
-    //     controlsFolder.add(startValues,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
-    //         this.boidLogic.maxSpeed=num/100
-    //     })
-    //     controlsFolder.add(startValues,"wallTransparent").onChange((bool)=>{
-    //         this.boidLogic.wallTransparent=bool
-// }) 
     }
 
-    /**DEBUG
-     */
-    debug()
+    debugValues()
     {
-        this.debugSolidBorderBox()
-        this.debugHalos()
+        
+        this.debug.folder.add(boidConfig.values,"visualRange").min(0.5).max(3).step(0.00001).onChange((num)=>{
+            this.boidLogic.visualRange=num
+            if(this.debug.visualRange)
+                {
+                    this.debugVisualRange(true)
+                }
+        })
+        this.debug.folder.add(boidConfig.values,"protectedRange").min(0.1).max(2).step(0.00001).onChange((num)=>{
+            this.boidLogic.protectedRange=num
+            if(this.debug.protectedRange)
+            {
+                this.debugProtectedRange(true)
+            }
+        })
+        this.debug.folder.add(boidConfig.values,"objectAvoidFactor").min(0).max(10).step(0.00001).onChange((num)=>{
+            this.boidLogic.objectAvoidFactor=num
+        })
+        this.debug.folder.add(boidConfig.values,"enviromentVision").min(0).max(5).step(0.00001)
+        this.debug.folder.add(boidConfig.values,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
+            this.boidLogic.cohesionFactor=num
+        })
+        this.debug.folder.add(boidConfig.values,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
+            this.boidLogic.matchingFactor=num
+        })
+        this.debug.folder.add(boidConfig.values,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
+            this.boidLogic.seperationFactor=num
+        })
+        this.debug.folder.add(boidConfig.values,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
+            this.boidLogic.turnFactor=num/100
+        })
+        this.debug.folder.add(boidConfig.values,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+            this.boidLogic.minSpeed=num/100
+        })
+        this.debug.folder.add(boidConfig.values,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+            this.boidLogic.maxSpeed=num/100
+        })
+        
     }
 
     //debug border box
     debugSolidBorderBox()
     {
-        // const box= new THREE.Mesh(
-        //     new THREE.BoxGeometry(this.sceneSize,this.sceneSize,this.sceneSize),
-        //     new THREE.MeshBasicMaterial({wireframe:true})
-        // )
-        const boxGeometry= new THREE.BoxGeometry(this.sceneSize,this.sceneSize,this.sceneSize)
+        this.debug.showBoundingBox=false
+        this.debug.folder.add(this.debug,'showBoundingBox').onChange(()=>
+        {
+            if(!this.debug.boundingBoxHelper)
+                {
+                    this.debug.boundingBoxHelper= new THREE.Box3Helper(this.boundingBox)
+                    this.scene.add(this.debug.boundingBoxHelper)
+                }
+            else{
+                this.scene.remove(this.debug.boundingBoxHelper)
+                this.debug.boundingBoxHelper.dispose()
+                this.debug.boundingBoxHelper=null
+            }
+        })
         
-
-        const box= new THREE.LineSegments(
-            new THREE.EdgesGeometry(boxGeometry),
-            new THREE.LineBasicMaterial({color:"red"})
-
-        )
-        this.scene.add(box)
-
-
     }
 
-    debugHalos()
+    debugProtectedRange(needsUpdate=false)
     {
-        
-        const viewMaterial = new THREE.LineBasicMaterial( { color: "green" } );
-        const protectedMaterial = new THREE.LineBasicMaterial( { color: "red" } );
+        if(!needsUpdate)
+        {
+            const material= new THREE.MeshBasicMaterial({
+                color:'red',
+                opacity:0.5,
+                transparent:true
+            })
+            const geometry= new THREE.SphereGeometry()
 
-        const viewCurve = new THREE.EllipseCurve(
-            0,  0,            // ax, aY
-            this.boidLogic.visualRange, this.boidLogic.visualRange,           // xRadius, yRadius
-            0,  2 * Math.PI,  // aStartAngle, aEndAngle
-            false,            // aClockwise
-            0                 // aRotation
-        );
-        
-       
-        let points = viewCurve.getPoints( 50 );
-        let viewGeometry = new THREE.BufferGeometry().setFromPoints( points );
-        
-        // Create the final object to add to the scene
-        const viewCircle = new THREE.Line( viewGeometry, viewMaterial );
+            this.debug.protectedRange= new THREE.Mesh(geometry,material)
 
+            const updateScale= new THREE.Vector3(1,1,1).multiplyScalar(boidConfig.values.protectedRange)
+            
 
-        const protectedCurve = new THREE.EllipseCurve(
-            0,  0,            // ax, aY
-            this.boidLogic.protectedRange, this.boidLogic.protectedRange,           // xRadius, yRadius
-            0,  2 * Math.PI,  // aStartAngle, aEndAngle
-            false,            // aClockwise
-            0                 // aRotation
-        );
-        
-       
-        points = protectedCurve.getPoints( 50 );
-        let protectedGeometry = new THREE.BufferGeometry().setFromPoints( points );
-        
-        // Create the final object to add to the scene
-        const protectedCircle = new THREE.Line( protectedGeometry, protectedMaterial );
-        // protectedCircle.material.color= new THREE.Color("red")
+            this.debug.protectedRange.scale.copy(updateScale)
 
-        this.scene.add(protectedCircle,viewCircle)
-
-        
-        this.debugHalos={
-            protectedCircle:protectedCircle,
-            viewCircle:viewCircle
+            this.scene.add(this.debug.protectedRange)
         }
-        // console.log(this.debugValues)
+        else
+        {
+            const updateScale= new THREE.Vector3(1,1,1).multiplyScalar(boidConfig.values.protectedRange)
+            
+            this.debug.protectedRange.scale.copy(updateScale)
+            this.scene.add(this.debug.protectedRange)
+        }
+
+        
     }
 
+    debugVisualRange(needsUpdate=false)
+    {
+        if(!needsUpdate)
+        {
+            const material= new THREE.MeshBasicMaterial({
+                color:'#5bff33',
+                opacity:0.5,
+                transparent:true
+            })
+            const geometry= new THREE.SphereGeometry()
+
+            this.debug.visualRange= new THREE.Mesh(geometry,material)
+
+            const updateScale= new THREE.Vector3(1,1,1).multiplyScalar(boidConfig.values.visualRange)
+            
+
+            this.debug.visualRange.scale.copy(updateScale)
+
+            this.scene.add(this.debug.visualRange)
+        }
+        else
+        {
+            const updateScale= new THREE.Vector3(1,1,1).multiplyScalar(boidConfig.values.visualRange)
+            
+            this.debug.visualRange.scale.copy(updateScale)
+            this.scene.add(this.debug.visualRange)
+        }
+
+        
+    }
+
+    debugVisionRange()
+    {
+        this.debug.showProtectedRange=false
+        this.debug.showVisualRange=false
+
+        this.debug.folder.add(this.debug,'showProtectedRange').onChange((bool)=>
+        {
+            if(!bool)
+            {
+                this.scene.remove(this.debug.protectedRange)
+                this.debug.protectedRange.material.dispose()
+                this.debug.protectedRange.geometry.dispose()
+
+            }
+            else
+            {
+                
+                this.debugProtectedRange()
+                
+            }
+        })
+
+        this.debug.folder.add(this.debug,'showVisualRange').onChange((bool)=>
+            {
+                if(!bool)
+                {
+                    this.scene.remove(this.debug.visualRange)
+                    this.debug.visualRange.material.dispose()
+                    this.debug.visualRange.geometry.dispose()
+    
+                }
+                else
+                {
+                    this.debugVisualRange()
+                }
+            })
+        
+    }   
+    //#endregion
 
 }
 
