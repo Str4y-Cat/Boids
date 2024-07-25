@@ -154,30 +154,38 @@ export default class BoidLogic
 
                     //check if there were any boids in the visual range
                     if(accum.neighboring_boids>0)
-                        {
-                            //average the positions and velocity by number of neighboring boids
-                            
-                            accum.xpos_avg/=accum.neighboring_boids
-                            accum.ypos_avg/=accum.neighboring_boids
-                            accum.zpos_avg/=accum.neighboring_boids
-                            accum.xvel_avg/=accum.neighboring_boids
-                            accum.yvel_avg/=accum.neighboring_boids
-                            accum.zvel_avg/=accum.neighboring_boids
-                            
+                    {
+                        //average the positions and velocity by number of neighboring boids
+                        
+                        accum.xpos_avg/=accum.neighboring_boids
+                        accum.ypos_avg/=accum.neighboring_boids
+                        accum.zpos_avg/=accum.neighboring_boids
+                        accum.xvel_avg/=accum.neighboring_boids
+                        accum.yvel_avg/=accum.neighboring_boids
+                        accum.zvel_avg/=accum.neighboring_boids
+                        
 
-                            
-                            //add cohesion and alignment factors
-                            boid.vx+= (accum.xpos_avg-boid.x)*this.cohesionFactor
-                            boid.vx+= (accum.xvel_avg-boid.vx)*this.matchingFactor
-                            // console.log('cohesion factor',(accum.xpos_avg-boid.x)*this.cohesionFactor)
-                            // console.log('matching factor',(accum.xvel_avg-boid.vx)*this.matchingFactor)
+                        
+                        //add cohesion and alignment factors
+                        boid.vx+= (accum.xpos_avg-boid.x)*this.cohesionFactor
+                        boid.vx+= (accum.xvel_avg-boid.vx)*this.matchingFactor
+                        // console.log('cohesion factor',(accum.xpos_avg-boid.x)*this.cohesionFactor)
+                        // console.log('matching factor',(accum.xvel_avg-boid.vx)*this.matchingFactor)
 
-                            boid.vy+= (accum.ypos_avg-boid.y)*this.cohesionFactor
-                            boid.vy+= (accum.yvel_avg-boid.vy)*this.matchingFactor
+                        boid.vy+= (accum.ypos_avg-boid.y)*this.cohesionFactor
+                        boid.vy+= (accum.yvel_avg-boid.vy)*this.matchingFactor
 
-                            boid.vz+= (accum.zpos_avg-boid.z)*this.cohesionFactor
-                            boid.vz+= (accum.zvel_avg-boid.vz)*this.matchingFactor
-                        }
+                        boid.vz+= (accum.zpos_avg-boid.z)*this.cohesionFactor
+                        boid.vz+= (accum.zvel_avg-boid.vz)*this.matchingFactor
+
+                        
+            
+                    }
+                    
+                    //Add sepperation factor
+                    boid.vx+= (accum.close_dx*this.seperationFactor)
+                    boid.vy+= (accum.close_dy*this.seperationFactor)
+                    boid.vz+= (accum.close_dz*this.seperationFactor)
                 }
 
                 //there are other objects! get out of the way
@@ -185,25 +193,26 @@ export default class BoidLogic
                 {
                     // console.log('avoiding objects')
                     //avoiding object
-                    const avoidObjExp=(1-environmentObjects[i].distance)**2
+                    const avoidObjExp=(1-environmentObjects[i].distance)**3
 
                     const dx= boid.x - environmentObjects[i].position.x
                     const dy= boid.y - environmentObjects[i].position.y
                     const dz= boid.z - environmentObjects[i].position.z
 
-                    accum.close_dx+=dx*avoidObjExp 
-                    accum.close_dy+=dy*avoidObjExp 
-                    accum.close_dz+=dz*avoidObjExp 
+                    // accum.close_dx+=dx*avoidObjExp 
+                    // accum.close_dy+=dy*avoidObjExp 
+                    // accum.close_dz+=dz*avoidObjExp 
 
-                    accum.close_dx*= this.objectAvoidFactor
-                    accum.close_dy*= this.objectAvoidFactor
-                    accum.close_dz*= this.objectAvoidFactor
+                    // accum.close_dx*= this.objectAvoidFactor
+                    // accum.close_dy*= this.objectAvoidFactor
+                    // accum.close_dz*= this.objectAvoidFactor
+
+                    boid.vx+= dx*avoidObjExp*this.objectAvoidFactor
+                    boid.vy+= dy*avoidObjExp*this.objectAvoidFactor
+                    boid.vz+= dz*avoidObjExp*this.objectAvoidFactor
                 }
 
-                //Add sepperation factor
-                boid.vx+= (accum.close_dx*this.seperationFactor)
-                boid.vy+= (accum.close_dy*this.seperationFactor)
-                boid.vz+= (accum.close_dz*this.seperationFactor)
+                
 
                 
                 //the bounding box
