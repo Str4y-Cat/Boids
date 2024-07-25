@@ -5,22 +5,17 @@ export default class BoidLogic
     /**
      * 
      * @param {int} boidCount 
-     * @param {object} displaySizes 
-     * @param {object} param2
-     * 
+     * @param {THREE.Box3} box 
      */
     constructor(boidCount,box)
     {
-        
         this.boundingBox=box
-        // console.log(box.max.x*1)
-        
-        //debuggable objects
+
+        //start values
         this.setUpTweakableValues()
 
-        //boid objects
-        this.initBoids(boidCount)
-        
+        //initiate
+        this.#initBoids(boidCount)
     }
 
     /**
@@ -40,15 +35,22 @@ export default class BoidLogic
         this.objectAvoidFactor=boidConfig.values.objectAvoidFactor  || defaultValue(2,"object avoid")
     }
 
-
-    initBoids(boidCount)
+    /**
+     * 
+     * @param {int} boidCount 
+     */
+    #initBoids(boidCount)
     {
         this.boidCount=boidCount|| defaultValue(1,"boidCount")
         this.boidArray=[]
         this.addBoids(this.boidCount)
     }
 
-
+    /**
+     * Creates and adds new boids, with randomized aceleration and position
+     * 
+     * @param {int} count 
+     */
     addBoids(count){
         
         for(let i = 0; i< count; i++)
@@ -64,7 +66,11 @@ export default class BoidLogic
             }
     }
 
-    
+    /**
+     * Removes boid position references
+     * 
+     * @param {int} count - amount of boids to remove
+     */
     removeBoids(count)
     {
         while(count)
@@ -74,8 +80,12 @@ export default class BoidLogic
         }
     }
 
-    // updates the boids based on other boids and environment objects
-    update(environmenObjects)
+    /**
+     * Updates the boid positions based on other boids and environment objects
+     * 
+     * @param {[obj]} environmentObjects - array of environment objects close to boids
+     */
+    update(environmentObjects)
     {
         const PROTECTED_RANGE_SQUARED= this.protectedRange**2
         const VISUAL_RANGE_SQUARED = this.visualRange**2  
@@ -93,7 +103,7 @@ export default class BoidLogic
                 boid.targetZ=boid.z
 
                 //zero accum variables
-                let accum= this.accumulatorObject()
+                let accum= this.#accumulatorObject()
                 
                 //loop through every other boid
                 this.boidArray.forEach((otherBoid,n)=>
@@ -140,7 +150,7 @@ export default class BoidLogic
                     })
 
                 //checks environmet objects to see if this boid is near an object
-                if(!environmenObjects[i]){
+                if(!environmentObjects[i]){
 
                     //check if there were any boids in the visual range
                     if(accum.neighboring_boids>0)
@@ -173,13 +183,13 @@ export default class BoidLogic
                 //there are other objects! get out of the way
                 else
                 {
-                    console.log('avoiding objects')
+                    // console.log('avoiding objects')
                     //avoiding object
-                    const avoidObjExp=(1-environmenObjects[i].distance)**2
+                    const avoidObjExp=(1-environmentObjects[i].distance)**2
 
-                    const dx= boid.x - environmenObjects[i].position.x
-                    const dy= boid.y - environmenObjects[i].position.y
-                    const dz= boid.z - environmenObjects[i].position.z
+                    const dx= boid.x - environmentObjects[i].position.x
+                    const dy= boid.y - environmentObjects[i].position.y
+                    const dz= boid.z - environmentObjects[i].position.z
 
                     accum.close_dx+=dx*avoidObjExp 
                     accum.close_dy+=dy*avoidObjExp 
@@ -197,7 +207,7 @@ export default class BoidLogic
 
                 
                 //the bounding box
-                boid=(this.wallTransparent)?this.transparentWall(boid):this.solidWall(boid)
+                boid=(this.wallTransparent)?this.#transparentWall(boid):this.#solidWall(boid)
                  
                 // calculate boids speed
                 //NOTE can get rid of the sqrt, move this check to before each variable(environment -> seperation -> alignment -> cohesion) is added to 
@@ -219,6 +229,7 @@ export default class BoidLogic
                         boid.vz= (boid.vz/speed)*this.maxSpeed
                     }
 
+                    //NOTE: Math.sqrt is a slow algorithm. better to use a distance/speed squared check. But I am yet to see noticable performace increases. further testing needed
                     // const speedSquared = boid.vx**2+boid.vy**2+boid.vz**2
 
                     // //enforce speedlimits
@@ -246,18 +257,25 @@ export default class BoidLogic
         })
     }
 
-    // sets up the accumulator object
-    accumulatorObject(){
+    /**
+     * An object containing relevant physics accumulations
+     * 
+     * @returns accumulator obj
+     */
+    #accumulatorObject(){
         const accum=
         {
-            xpos_avg:0,
+            xpos_avg:0, //position averages
             ypos_avg:0,
             zpos_avg:0,
-            xvel_avg:0,
+
+            xvel_avg:0, //velocity averages
             yvel_avg:0,
             zvel_avg:0,
-            neighboring_boids:0,
-            close_dx:0,
+
+            neighboring_boids:0,    //count of neighboring boids within visual range
+
+            close_dx:0, 
             close_dy:0,
             close_dz:0
         }
@@ -270,7 +288,14 @@ export default class BoidLogic
         return this.boidArray[0]
     }
 
-    solidWall(boid)
+    /**
+     * Keeps boids within a bounding box. 
+     * Bounding box acts as a notice to turn around
+     * 
+     * @param {obj} boid 
+     * @returns 
+     */
+    #solidWall(boid)
     {
 
         if(this.boundingBox.max.y<boid.y)  //top
@@ -304,7 +329,14 @@ export default class BoidLogic
         return boid
     }
 
-    transparentWall(boid)
+    /**
+     * Keeps boids within a bounding box. 
+     * Bounding box acts as 'portal'.
+     * 
+     * @param {obj} boid 
+     * @returns 
+     */
+    #transparentWall(boid)
     {
         if(this.boundingBox.max.y<boid.y)  //top
             {
