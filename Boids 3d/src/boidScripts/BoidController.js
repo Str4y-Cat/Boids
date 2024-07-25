@@ -19,7 +19,7 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, sizes, scene,debug,gui,camera,texture)
+    constructor(count, size, scene)
     {
         // this.camera=camera
         // this.texture= texture
@@ -27,8 +27,10 @@ export default class BoidController
         this.scene=scene
         // this.sceneSize=debug.floorSize
         // this.gui=gui
-
-        this.boundingBox= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(this.sceneSize,this.sceneSize,this.sceneSize))
+        
+        this.boundingBox= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(size,size,size))
+        
+        
         this.boidMeshes= []
         this.boidCount=null
         
@@ -134,13 +136,13 @@ export default class BoidController
     //#endregion
 
     //#region utils
-    follow(camera,index=0)
-    {
-        this.followBoid={}
+    // follow(camera,index=0)
+    // {
+    //     this.followBoid={}
         
-        this.followBoid.index= index
-        this.camera= camera
-    }
+    //     this.followBoid.index= index
+    //     this.camera= camera
+    // }
 
 
     //#endregion
@@ -392,7 +394,4 @@ export default class BoidController
 
 }
 
-/**
- * start options
- */
 

@@ -78,7 +78,9 @@ export default class BoidLogic
     update(environmenObjects)
     {
         const PROTECTED_RANGE_SQUARED= this.protectedRange**2
-        const VISUAL_RANGE_SQUARED = this.visualRange**2    
+        const VISUAL_RANGE_SQUARED = this.visualRange**2  
+        // console.log(this.cohesionFactor)
+        
 
         this.boidArray.forEach((boid,i)=>
             {
@@ -99,8 +101,6 @@ export default class BoidLogic
                         const dy= boid.y - otherBoid.y
                         const dz= boid.z - otherBoid.z
 
-
-                        
                         //check if they are within visual range
                         if(Math.abs(dx)<this.visualRange && Math.abs(dy)<this.visualRange&& Math.abs(dz)<this.visualRange)
                             {
@@ -157,6 +157,8 @@ export default class BoidLogic
                             //add cohesion and alignment factors
                             boid.vx+= (accum.xpos_avg-boid.x)*this.cohesionFactor
                             boid.vx+= (accum.xvel_avg-boid.vx)*this.matchingFactor
+                            // console.log('cohesion factor',(accum.xpos_avg-boid.x)*this.cohesionFactor)
+                            // console.log('matching factor',(accum.xvel_avg-boid.vx)*this.matchingFactor)
 
                             boid.vy+= (accum.ypos_avg-boid.y)*this.cohesionFactor
                             boid.vy+= (accum.yvel_avg-boid.vy)*this.matchingFactor
@@ -166,9 +168,10 @@ export default class BoidLogic
                         }
                 }
 
-                //there are other boids! get out of the way
+                //there are other objects! get out of the way
                 else
                 {
+                    console.log('avoiding objects')
                     //avoiding object
                     const avoidObjExp=(1-environmenObjects[i].distance)**2
 
@@ -186,7 +189,8 @@ export default class BoidLogic
                 }
 
                 //Add sepperation factor
-                boid.vx+= (accum.close_dx*this.seperationFactor) 
+                boid.vx+= (accum.close_dx*this.seperationFactor)
+                // console.log(accum.close_dx*this.seperationFactor) 
                 boid.vy+= (accum.close_dy*this.seperationFactor)
                 boid.vz+= (accum.close_dz*this.seperationFactor)
 
