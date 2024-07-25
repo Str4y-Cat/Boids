@@ -5,13 +5,10 @@ export default
         visualRange:0.75046,
         protectedRange:0.38377,
         enviromentVision:2,
-        objectAvoidFactor:0.222,
-        // cohesionFactor:0.00206,
-        cohesionFactor:0.0,
-        matchingFactor:0.,
-        seperationFactor:0,
-        // matchingFactor:0.06312,
-        // seperationFactor:0.19269,
+        objectAvoidFactor:5,
+        cohesionFactor:0.00206,
+        matchingFactor:0.06312,
+        seperationFactor:0.19269,
         
         minSpeed:2.379,
         maxSpeed:5.206,
@@ -19,4 +16,10 @@ export default
         turnFactor:0.201,
         
     },
+    vision:
+    {
+        count:400,
+        rayAngleLimit:2,
+        far:0.3
+    }
 }
