@@ -5,34 +5,26 @@ import RaySphere from './RaySphere'
 
 export default class 
 {
-    constructor(environmentOctree,scene,gui)
+    constructor(environmentOctree)
     {
         this.environmentOctree= environmentOctree
 
         this.raySphere= new RaySphere()
 
-
         this.stagger= {count:0}
 
-
-        this.debug={}
-        this.debug.pointMeshes={}
-
-        console.log("set up ray controller")
-        // console.log(this)
-        // this.test()
     }
 
 
     //  NOTE: it may be better to use the standard boid position array,instead of the vec3 arr
 
     /**
-     * checks the environment to see if ANY boid sees an object
+     * checks the environment to see if there are world objects within the boids vision
      * 
      * @param {[THREE.Vector3]} boidPositions 
      * @returns {foundIntersections{boidindex,{distance,position}}} found intersections
      */
-    checkEnviroment(boidPositions, iStart, iEnd)
+    #checkEnviroment(boidPositions, iStart, iEnd)
     {
         if(iStart==null||iEnd==null)
             {
@@ -56,13 +48,6 @@ export default class
                 //rotate raySphere to match boid
                 const targets= this.raySphere.rotateTo(boidPositions[i])
                 
-                //sets debug for testing rays
-                // if(this.debug)
-                // {
-                //     this.debug.foundIntersections
-                // }
-                this.raySphere.debug.origin=boidPositions[i].position
-
                 //cast rays on that sphere
                 environmentIntersections = this.raySphere.castRays(targets,boidPositions[i].position, enviromentObjects)
                 
@@ -114,41 +99,56 @@ export default class
 
         if(this.debug.showRays)
         {
-            this.debugUpdate(boidPoistions[0])
+            this.#debugUpdate(boidPoistions[0])
         }
 
         //check the environment based on the window
-        return this.checkEnviroment(boidPoistions,iStart,iEnd)
+        return this.#checkEnviroment(boidPoistions,iStart,iEnd)
     }
 
+
+    /**
+     * sets up debug panel for raycasting.
+     * Includes:
+     * - Show/Hide ray targets
+     * - Tweak ray count
+     * - Tweak Ray angle
+     * - Tweak Ray Distance
+     * 
+     * @param {*} gui lil-gui instance
+     * @param {*} scene three.js scene
+     */
     setDebug(gui,scene)
     {
+        this.debug={}
         const folder= gui.addFolder('Environment Vision')
         
-        this.debugRays(folder,scene)
+        this.#debugRays(folder,scene)
+        this.#debugTweakRays(folder,scene)
     }
 
-    debugUpdate(boidMesh)
+    
+    #debugUpdate(boidMesh)
     {
         this.debug.pointSphere.position.copy(boidMesh.position)
         this.debug.pointSphere.rotation.copy(boidMesh.rotation)
     }
     
-    debugRays(folder,scene)
+    #debugRays(folder,scene)
     {
         this.debug.showRays=false
         folder.add(this.debug,'showRays').onChange(bool=>{
 
             if(bool)
             {
-                this.debugSetPointSphere(scene)
+                this.#debugSetPointSphere(scene)
             }
             else{
-                this.debugRemovePointSphere(scene)
+                this.#debugRemovePointSphere(scene)
             }
         })
     }
-    debugSetPointSphere(scene)
+    #debugSetPointSphere(scene)
     {
         this.debug.pointSphere= this.raySphere.getPointSphere()
         const scale=new THREE.Vector3(1,1,1)
@@ -157,71 +157,59 @@ export default class
         scene.add(this.debug.pointSphere)
     }
 
-    debugRemovePointSphere(scene)
+    #debugRemovePointSphere(scene)
     {
         scene.remove(this.debug.pointSphere)
         this.debug.pointSphere.material.dispose()
         this.debug.pointSphere.geometry.dispose()
     }
 
-    debugTweakRays(folder,scene)
+    #debugTweakRays(folder,scene)
     {
-        //addmore less points
-        folder.add(this.raySphere,'rayCount').min(1).max(500).step(1).name('Ray Count').onChange(()=>{
-
+        //tweak points
+        folder.add(this.raySphere,'rayCount').min(1).max(500).step(1).name('Ray Count').onChange((num)=>{
+            //update raysphere sphere
+            // this.raySphere.rayCount=num
+            this.raySphere.updatePointSphere()
+            //udpate debug sphere
+            if(this.debug.showRays)
+            {
+                this.#debugRemovePointSphere(scene)
+                this.#debugSetPointSphere(scene)
+            }
         })
 
 
         //change angle
+        folder.add(this.raySphere,'rayAngleLimit').min(-1).max(1).step(0.001).name('Ray Angle').onChange(()=>{
+            //update raysphere sphere
+            // this.raySphere.rayCount=num
+            this.raySphere.updatePointSphere()
+            //udpate debug sphere
+            if(this.debug.showRays)
+            {
+                this.#debugRemovePointSphere(scene)
+                this.#debugSetPointSphere(scene)
+            }
+        })
+
+        //change vision distance
+        folder.add(this.raySphere,'rayFar').min(0).max(1).step(0.001).name('Ray Distance').onChange(()=>{
+            //update raysphere sphere
+            // this.raySphere.rayCount=num
+            this.raySphere.updatePointSphere()
+            //udpate debug sphere
+            if(this.debug.showRays)
+            {
+                this.#debugRemovePointSphere(scene)
+                this.#debugSetPointSphere(scene)
+            }
+        })
+
+        
     }
 
-    // //#region DEBUG
-    // /**
-    //  * debugRay
-    //  * 
-    //  * shoot a line to the target if there is something found
-    //  */
-    // debugPoints(boid,i)
-    // {   
 
-    //     if(this.debug.pointMeshes[i]){
-    //         this.removePointsMesh(this.debug.pointMeshes[i])
-    //     }
-    //     //remoce the debug object from the scene
-
-    //     // //create the float array
-    //     //     const positionsArray=arr
-    //     // //create geometry
-    //     //     const geometry= new THREE.BufferGeometry()
-    //     // //create postions attribute
-    //     //     geometry.setAttribute('position', new THREE.BufferAttribute(positionsArray,3))
-    //     // //create material
-    //     //     const material= new THREE.PointsMaterial(
-    //     //         {
-    //     //             color:'white',
-    //     //             size:0.007,
-    //     //             sizeAttenuation:true,
-    //     //         }
-    //     //     )
-    //     //create mesh
-    //         const mesh= this.raySphere.pointSphere.clone()
-
-            
-    //         mesh.position.copy(boid.position)
-    //     //add to scene
-    //         this.scene.add(mesh)
-    //         this.debug.pointMeshes[i]=mesh
-
-
-    // }
-    // removePointsMesh(mesh)
-    // {
-    //     this.scene.remove(mesh)
-    //     mesh.geometry.dispose()
-    //     mesh.material.dispose()
-    // }
-
-    //#endregion
 
 
 }
