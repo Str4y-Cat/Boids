@@ -244,7 +244,7 @@ export default class BoidController
      */
     #debugCount()
     {   
-        this.debug.folder.add(this.debug,'boidCount'). min(1).max(1500).step(1).onChange((count)=>
+        this.debug.folder.add(this.debug,'boidCount'). min(1).max(1500).step(4).onChange((count)=>
         {
             this.boidCount=count
             if(count>this.boidMeshes.length)
