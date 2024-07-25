@@ -78,7 +78,7 @@ window.addEventListener('resize',()=>
  * floor
  */
 debug.floorSize=5
-const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
+const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,5,5)
 floorGeometry.computeBoundingBox();
 floorGeometry.computeBoundsTree();
 const floorMaterial= new THREE.MeshBasicMaterial(
@@ -193,7 +193,7 @@ createRandom()
  * octree
  */
 
-const environment=new CreateOctree(environmentObjects,0.3,scene)
+const environment=new CreateOctree(environmentObjects,0.5,scene)
 debug.showOctree=true
 const octreeFolder=gui.addFolder('Octree')
 octreeFolder.add(debug,'showOctree').onChange(bool=>{
@@ -260,7 +260,7 @@ window.addEventListener('keydown',(e)=>
 const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 const material = new THREE.MeshMatcapMaterial( {matcap:matCapTexture} );
 
-const boidController= new BoidController(800,debug.floorSize,scene)
+const boidController= new BoidController(300,debug.floorSize,scene)
 boidController.setStandardMesh(geometry,material)
 boidController.viewDebug(gui)
 // boidController.follow(camera,0)
@@ -278,8 +278,8 @@ boidController.viewDebug(gui)
  * RAYCASTING
  */
 
-const rayController=new RayController(50,-0.347,environment.octree,scene,gui)
-
+const rayController=new RayController(environment.octree,scene,gui)
+rayController.setDebug(gui,scene)
 //#endregion
 
 /**
@@ -336,7 +336,7 @@ const tick =()=>
         if(slowTick!=past){
             // perform.timer('check environment')
             
-            // intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
+            intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
 
             // perform.timer('check environment')
         }
