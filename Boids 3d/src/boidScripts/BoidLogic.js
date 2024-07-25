@@ -79,6 +79,8 @@ export default class BoidLogic
     {
         const PROTECTED_RANGE_SQUARED= this.protectedRange**2
         const VISUAL_RANGE_SQUARED = this.visualRange**2  
+        // const MIN_SPEED_SQUARED= this.minSpeed**2
+        // const MAX_SPEED_SQUARED= this.maxSpeed**2
         // console.log(this.cohesionFactor)
         
 
@@ -190,7 +192,6 @@ export default class BoidLogic
 
                 //Add sepperation factor
                 boid.vx+= (accum.close_dx*this.seperationFactor)
-                // console.log(accum.close_dx*this.seperationFactor) 
                 boid.vy+= (accum.close_dy*this.seperationFactor)
                 boid.vz+= (accum.close_dz*this.seperationFactor)
 
@@ -198,7 +199,6 @@ export default class BoidLogic
                 //the bounding box
                 boid=(this.wallTransparent)?this.transparentWall(boid):this.solidWall(boid)
                  
-                
                 // calculate boids speed
                 //NOTE can get rid of the sqrt, move this check to before each variable(environment -> seperation -> alignment -> cohesion) is added to 
                 //create heirachy with the fish
@@ -218,6 +218,25 @@ export default class BoidLogic
                         boid.vy= (boid.vy/speed)*this.maxSpeed
                         boid.vz= (boid.vz/speed)*this.maxSpeed
                     }
+
+                    // const speedSquared = boid.vx**2+boid.vy**2+boid.vz**2
+
+                    // //enforce speedlimits
+    
+                    // if (speedSquared< MIN_SPEED_SQUARED)
+                    //     {   
+                    //         const speed= Math.sqrt(speedSquared)
+                    //         boid.vx= (boid.vx/speed)*this.minSpeed
+                    //         boid.vy= (boid.vy/speed)*this.minSpeed
+                    //         boid.vz= (boid.vz/speed)*this.minSpeed
+                    //     }
+                    // if (speedSquared> MAX_SPEED_SQUARED)
+                    //     {
+                    //         const speed= Math.sqrt(speedSquared)
+                    //         boid.vx= (boid.vx/speed)*this.maxSpeed
+                    //         boid.vy= (boid.vy/speed)*this.maxSpeed
+                    //         boid.vz= (boid.vz/speed)*this.maxSpeed
+                    //     }
                 
                 //update positions
                 boid.x+=boid.vx

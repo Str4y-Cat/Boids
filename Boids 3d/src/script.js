@@ -260,7 +260,7 @@ window.addEventListener('keydown',(e)=>
 const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 const material = new THREE.MeshMatcapMaterial( {matcap:matCapTexture} );
 
-const boidController= new BoidController(1,debug.floorSize,scene)
+const boidController= new BoidController(800,debug.floorSize,scene)
 boidController.setStandardMesh(geometry,material)
 boidController.viewDebug(gui)
 // boidController.follow(camera,0)

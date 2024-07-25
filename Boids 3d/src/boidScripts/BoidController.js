@@ -1,5 +1,6 @@
 import BoidLogic from "./BoidLogic";
 import boidConfig from "./boid.config";
+import Performance from "../performance/Performance";
 import * as THREE from 'three'
 
 export default class BoidController
@@ -21,22 +22,16 @@ export default class BoidController
      */
     constructor(count, size, scene)
     {
-        // this.camera=camera
-        // this.texture= texture
-        // this.global={}
+        
         this.scene=scene
-        // this.sceneSize=debug.floorSize
-        // this.gui=gui
-        
+
         this.boundingBox= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(size,size,size))
-        
-        
         this.boidMeshes= []
         this.boidCount=null
         
-
         this.setBoidLogic(count)
 
+        this.performance= new Performance()
     }
 
     //#region boids
@@ -136,15 +131,7 @@ export default class BoidController
     //#endregion
 
     //#region utils
-    // follow(camera,index=0)
-    // {
-    //     this.followBoid={}
-        
-    //     this.followBoid.index= index
-    //     this.camera= camera
-    // }
-
-
+    
     //#endregion
 
     /** Update()
@@ -154,9 +141,11 @@ export default class BoidController
      */
     update(environmenObjects)
     {
-        
+        this.performance.timer('boidLogic',true)
         this.boidLogic.update(environmenObjects)
+        this.performance.timer('boidLogic',true)
 
+        // this.performance.timer('boid Draw')
         this.boidMeshes.forEach((boidMesh,i)=>
         {
             const boid= this.boidLogic.boidArray[i]
@@ -165,6 +154,7 @@ export default class BoidController
            
             boidMesh.lookAt(new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ))
         })
+        // this.performance.timer('boid Draw')
 
         if(this.debug)
         {
@@ -196,6 +186,8 @@ export default class BoidController
         //create a gui folder
         this.debug.folder=  gui.addFolder("Boids")
 
+
+        
         //add count tweak
         this.debugCount()
         //parameters tweaks
