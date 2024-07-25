@@ -8,11 +8,6 @@ export default class RaySphere
      * raySphere controlls the positioning and firing of rays for one object
      * - uses a point geometry to position targets for rays. 
      * 
-     * @param {*} count amount of rays to be tested
-     * @param {*} rayAngleLimit angle limit for the rays (-1 -> 1)
-     * @param {*} scene the three.js scene
-     * @param {*} gui debug gui
-     * @param {*} rayCastValues object holding values specific to the raycaster. {far:"length of fired rays"}
      */
     constructor()
     {
@@ -42,11 +37,14 @@ export default class RaySphere
         this.rayCount=boidConfig.vision.count
         this.rayAngleLimit=boidConfig.vision.rayAngleLimit
         this.rayFar=boidConfig.vision.far
-        this.needsUpdate=false
+        
     }
 
     
-
+    /**
+     * 
+     * @returns clone of the pointsphere
+     */
     getPointSphere()
     {
         return this.pointSphere.clone()
@@ -55,7 +53,7 @@ export default class RaySphere
     //#region sphere methods
 
     /**
-     * Creates the point sphere points mesh using a bufferattribute derived from the global float array
+     * updates point sphere mesh
      * 
      * @returns mesh
      */
@@ -73,6 +71,11 @@ export default class RaySphere
 
     }
     
+    /**
+     * Creates the point sphere points mesh using a bufferattribute derived from the global float array
+     * 
+     * @returns mesh
+     */
     setUpPointSphere()
     {
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
@@ -259,168 +262,7 @@ export default class RaySphere
     
     //#endregion
 
-    //#region DEBUG
-
-
-    // /**
-    //  * draws a path from the origin parameter to the obsticle parameter
-    //  * 
-    //  * @param {*} obsticle 
-    //  * @param {*} origin 
-    //  * @returns 
-    //  */
-    // debugRay(obsticle,origin)
-    // {   
-    //     //clear the last ray path
-    //     // console.log(obsticle)
-    //     // console.log('debugging ray')
-    //     this.removeRay()
-        
-        
-    //     if(!obsticle.isVector3){obsticle= obsticle.position;}
-
-    //     const lineMaterial= new THREE.LineBasicMaterial();
-    //     lineMaterial.color=new THREE.Color("green")
-    //     const baseTarget= origin
-    //     const target= new THREE.Vector3(obsticle.x,obsticle.y,obsticle.z)
-    //     // target.clampLength(0,this.rayFar)
-    //     const lineArr=[]
-
-    //     let lineGeometry = new THREE.BufferGeometry().setFromPoints( [baseTarget,target] );
-
-
-    //     let line = new THREE.Line(lineGeometry, lineMaterial);
-    //     this.scene.add(line);
-    //     lineArr.push(line)
-            
     
-    //     return lineArr
-
-    // }
-
-    // /**
-    //  * draws a line for every target for a specific origin
-    //  */
-    // debugTestTargets()
-    // {
-    //     // const arr= this.toVec3Arr(this.rayPositions_floatArray)
-    //     const vertices= this.toWorldVertices(this.pointSphere.geometry)
-
-    //     const origin= this.debug.origin
-    //     // console.log(origin)
-    //     // this.rayPositions_vec3Array.forEach((target)=>
-    //     //     {
-    //     //         this.debugRay(target, origin)
-    //     //     })
-    //     // console.log(vertices.length)
-
-    //     vertices.forEach((target)=>
-    //         {   
-    //             // target.clamp(new THREE.Vector3(0,0,0),this.rayFar)
-    //             // target.add(origin).normalize()
-    //             target.clampLength(0,this.rayFar).add(origin)
-    //             // console.log(clamp)
-    //             this.debugRay(target, origin)
-    //         })
-
-
-        
-    // }
-
-    // /**
-    //  * removes the drawn path
-    //  */
-    // removeRay(){
-    //     if(this.debug.ray){
-    //         // console.log(this.debug.ray[0].material)
-    //         this.debug.ray[0].material.color.set(new THREE.Color("red"))
-    //         // this.scene.remove(this.debug.ray[0])
-    //         // this.debug.ray[0].material.dispose()
-    //         // this.debug.ray[0].geometry.dispose()
-    //     }
-    // }
-
-    // updateAngle(rayAngleLimit)
-    // {
-    //     // this.rayAngleLimit=rayAngleLimit
-
-    //     // this.rayColours= this.fibonacci_colours()
-    //     this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
-    //     this.rayPositions_floatArray=this.toFloatArr(this.rayPositions_vec3Array)
-    //     this.pointSphere.geometry.setAttribute('position',
-    //         new THREE.BufferAttribute(this.rayPositions_floatArray,3)
-    //     )
-    //     this.needsUpdate=true
-    // }
-
-    // updateArrayCount(count)
-    // {
-    //     // this.rayCount=count
-    //     // this.debugColours= this.fibonacci_colours()
-    //     this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
-    //     this.rayPositions_floatArray=this.toFloatArr(this.rayPositions_vec3Array)
-    //     this.pointSphere.geometry.setAttribute('position',
-    //         new THREE.BufferAttribute(this.rayPositions_floatArray,3)
-    //     )
-    //     this.needsUpdate=true
-
-    // }
-
-    // test()
-    // {
-       
-    //     for(let i=0; i<10;i++){
-    //         this.counter('test',false,1)
-    //         this.counter('test2',false,2)
-
-    //     }
-    //     this.counter('return',true)
-
-
-    // }
-    // setUpDebug()
-    // {
-    //     const folder= this.gui.addFolder('Rays')
-    //     //set up Points
-        
-    //     this.debug.rotation=0
-    //     this.debug.getPointCount=()=>{console.log(`Sphere points: ${this.debug.rayTargetCount}`)}
-    //     this.debug.getTest=()=>{console.log(`Test:`);console.log(this.debug.test)}
-    //     // console.log(this.debug)
-
-
-    //     folder.add(this,'rayCount').min(0).max(400).step(1).onFinishChange((num)=>
-    //         {
-    //             this.updateArrayCount(num)
-    //             this.updateAngle(this.rayCutoff)
-                
-
-    //             this.pointSphere.geometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
-    //             this.pointSphere.geometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
-        
-        
-    //         })
-    //     folder.add(this,'rayAngleLimit').min(-1).max(1).step(0.001).onChange((angleLimit)=>
-    //         {
-    //             this.updateArrayCount(this.rayCount)
-
-    //             this.updateAngle(angleLimit)
-    //             this.pointSphere.geometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
-    //             this.pointSphere.geometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
-        
-
-    //         })
-        
-    //     folder.add(this.debug,'getPointCount')
-    //     folder.add(this.debug,'getTest')
-    //     folder.add(this,'test')
-    //     folder.add(this,'debugTestTargets').name("Fire all Rays")
-
-
-
-    // }
-    //#endregion
-
     //#region utils
 
     /**
@@ -496,128 +338,6 @@ export default class RaySphere
         }
         return vec3Arr
     }
-
-    // //[x]: ADD counter() method
-    // /**
-    //  *  counter(name,return flag||false, incrementValue||1)
-    //  *  if(returnFlag){console.log(this.count)}
-    //  *  checks if this.count[name] exists, create if it does with count=0
-    //  *  this.count[name]+=incrementVaule
-    //  * 
-    //  */
-
-    // //[ ] move to performace class
-    // counter(name,returnFlag,incrementValue)
-    // {
-    //     // console.log("testing")
-    //     // returnFlag=(returnFlag)?returnFlag:false
-
-    //     if(returnFlag)
-    //         {
-    //             console.log(this.count)
-    //             this.count={}
-
-    //         }
-    //     else
-    //         {
-    //             incrementValue=(incrementValue)?incrementValue:1
-        
-    //             if(this.count[name])
-    //                 {
-    //                     this.count[name]+=incrementValue
-    //                 }
-    //             else
-    //             {
-    //                 this.count[name]=incrementValue
-    //             }
-    //         }
-        
-
-
-    // }
-    // timer(name)
-    // {
-    //     // console.log("testing")
-    //     // returnFlag=(returnFlag)?returnFlag:false
-    //     if(this.time[name])
-    //         {
-    //             const delta=performance.now() - this.time[name].start
-                
-    //             // if(!this.time[name].total)
-    //             //     {
-    //             //     this.time[name].total=0
-    //             //     this.time[name].count=0
-    //             //     }
-                
-    //             // this.time[name].total+=Date.now() - this.time[name].start
-    //             // this.time[name].count+=1
-    //             if(this.totalTime[name]){
-    //                 this.totalTime[name].time+= delta
-    //                 this.totalTime[name].total+=1
-    //                 this.totalTime[name].avg=this.totalTime[name].time/this.totalTime[name].total
-    //             }
-    //             else{
-    //                 this.totalTime[name]={}
-    //                 this.totalTime[name].time=delta
-    //                 this.totalTime[name].total=1
-    //             }
-    //             console.log(`${name}: ${delta} ms\n average: ${this.totalTime[name].avg}`)
-
-    //             this.time[name]=null
-    //         }
-    //     else
-    //     {
-    //         this.time[name]={}
-    //         this.time[name].start=performance.now();
-    //     }
-
-    // }
-    
-
     //#endregion
-
-    //#region unused
-    
-    
-    // fibonacci_colours(){
-    //     // console.log(`this.rayCount: ${this.rayCount}`)
-    //     const points = new Float32Array(this.rayCount*3)
-    //     const phi = Math.PI * (Math.sqrt(5)-1)  //golden angle in radians
-        
-        
-    //     for(let i=0; i<this.rayCount; i++)
-    //         {
-    
-    //             let y = 1 - (i / (this.rayCount - 1)) * 2  // y goes from 1 to -1
-    //             let radius = Math.sqrt(1 - y * y)  // radius at y
-        
-    //             let theta = phi * i  // golden angle increment
-        
-    //             let x = Math.cos(theta) * radius 
-    //             let z = Math.sin(theta) * radius 
-    
-    
-    //             const i3=i*3
-    //             let shrinkFactor= 3
-    
-    //             const color1=new THREE.Color("black")
-    //             const color2=new THREE.Color("green")
-    //             let mixedColor= color1.clone()
-                
-    //             const lerpValue= (z<this.rayAngleLimit)?1:0
-    //             // console.log(lerpValue)
-    //             mixedColor.lerp(color2,(lerpValue)) 
-    
-    //             points[i3]=mixedColor.r
-    //             points[i3+1]=mixedColor.g
-    //             points[i3+2]=mixedColor.b
-    
-    
-    //         }
-    //         return points
-    // }
-    
-    //#endregion
-
 }
 
