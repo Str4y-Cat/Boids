@@ -18,8 +18,8 @@ export default
     },
     vision:
     {
-        count:400,
-        rayAngleLimit:2,
+        count:183,
+        rayAngleLimit:-0.613,
         far:0.3
     }
 }
