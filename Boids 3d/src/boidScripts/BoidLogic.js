@@ -181,7 +181,7 @@ export default class BoidLogic
                         
             
                     }
-                    
+
                     //Add sepperation factor
                     boid.vx+= (accum.close_dx*this.seperationFactor)
                     boid.vy+= (accum.close_dy*this.seperationFactor)
@@ -198,14 +198,6 @@ export default class BoidLogic
                     const dx= boid.x - environmentObjects[i].position.x
                     const dy= boid.y - environmentObjects[i].position.y
                     const dz= boid.z - environmentObjects[i].position.z
-
-                    // accum.close_dx+=dx*avoidObjExp 
-                    // accum.close_dy+=dy*avoidObjExp 
-                    // accum.close_dz+=dz*avoidObjExp 
-
-                    // accum.close_dx*= this.objectAvoidFactor
-                    // accum.close_dy*= this.objectAvoidFactor
-                    // accum.close_dz*= this.objectAvoidFactor
 
                     boid.vx+= dx*avoidObjExp*this.objectAvoidFactor
                     boid.vy+= dy*avoidObjExp*this.objectAvoidFactor
