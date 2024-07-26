@@ -406,7 +406,7 @@ export default class Octree
         const debug={}
         debug.showOctree=false
 
-        folder.add(debug,'showOctree').onChange(bool=>{
+        folder.add(debug,'showOctree').name('View Octree Structure').onChange(bool=>{
             if(bool)
                 {
                     this.showOctree(scene)
