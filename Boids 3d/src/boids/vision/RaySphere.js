@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import boidConfig from '../boidScripts/boid.config'
+import boidConfig from '../logic/boid.config'
 
 
 export default class RaySphere

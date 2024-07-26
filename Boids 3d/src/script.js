@@ -4,17 +4,17 @@
 import * as THREE from 'three'
 import GUI from 'lil-gui'
 import {  OrbitControls } from 'three/examples/jsm/Addons.js'
-import BoidController from './boidScripts/BoidController'
+import BoidController from './boids/logic/BoidController'
 
-import { DragControls } from 'three/addons/controls/DragControls.js';
-import RAYS from './rayCast/RaySphere'
+// import { DragControls } from 'three/addons/controls/DragControls.js';
+// import RAYS from './rayCast/RaySphere'
 import Stats from 'three/addons/libs/stats.module.js';
 
-import RayController from './rayCast/RayController';
+import RayController from './boids/vision/RayController';
 
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
 // import CreateOctree from './octree/createOctree'
-import Octree from './octree/Octree'
+import Octree from './boids/octree/Octree'
 
 
 // Add the extension functions
@@ -28,8 +28,7 @@ THREE.Mesh.prototype.raycast = acceleratedRaycast;
 //set up debug
 const gui = new GUI()
 const debug= {}
-// gui.add(perform,'reset').name('reset average')
-// gui.add(perform,'avg').name('avg')
+
 
 const textureLoader= new THREE.TextureLoader()
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
