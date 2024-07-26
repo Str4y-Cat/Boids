@@ -9,12 +9,12 @@ import BoidController from './boidScripts/BoidController'
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import RAYS from './rayCast/RaySphere'
 import Stats from 'three/addons/libs/stats.module.js';
-import Performance from './performance/Performance';
 
 import RayController from './rayCast/RayController';
 
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
-import CreateOctree from './octree/createOctree'
+// import CreateOctree from './octree/createOctree'
+import Octree from './octree/Octree'
 
 
 // Add the extension functions
@@ -28,8 +28,7 @@ THREE.Mesh.prototype.raycast = acceleratedRaycast;
 //set up debug
 const gui = new GUI()
 const debug= {}
-const perform= new Performance()
-gui.add(perform,'reset').name('reset average')
+// gui.add(perform,'reset').name('reset average')
 // gui.add(perform,'avg').name('avg')
 
 const textureLoader= new THREE.TextureLoader()
@@ -193,22 +192,8 @@ createRandom()
  * octree
  */
 
-const environment=new CreateOctree(environmentObjects,0.5,scene)
-debug.showOctree=true
-const octreeFolder=gui.addFolder('Octree')
-octreeFolder.add(debug,'showOctree').onChange(bool=>{
-    if(bool)
-        {
-            environment.showOctree()
-
-        }
-    else
-    {
-        environment.hideOctree()
-
-    }
-
-})
+const environment=new Octree(environmentObjects,0.5)
+environment.debug(gui,scene)
 //#endregion
 
 
@@ -278,7 +263,7 @@ boidController.viewDebug(gui)
  * RAYCASTING
  */
 
-const rayController=new RayController(environment.octree,scene,gui)
+const rayController=new RayController(environment,scene,gui)
 rayController.setDebug(gui,scene)
 //#endregion
 

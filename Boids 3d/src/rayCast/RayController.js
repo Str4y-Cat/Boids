@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { arrayBuffer, attribute } from 'three/examples/jsm/nodes/Nodes.js'
 import RaySphere from './RaySphere'
 
 
