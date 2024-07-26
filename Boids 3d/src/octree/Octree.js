@@ -7,13 +7,13 @@ export default class Octree
     {
 
         //create a new box
-        const bounds = this.setUpBounds(worldObjects)
+        const bounds = this.#setUpBounds(worldObjects)
 
         //create rootNode
         this.rootNode= new OctreeNode(bounds,minNodeSize)
 
         //add objects to the tree
-        this.addObjects(worldObjects)
+        this.#addObjects(worldObjects)
         
 
     }
@@ -23,7 +23,7 @@ export default class Octree
      * @param {*} worldObjects 
      * @returns Box3
      */
-    setUpBounds(worldObjects)
+    #setUpBounds(worldObjects)
     {
         //create a new box
         const bounds = new THREE.Box3() 
@@ -41,14 +41,13 @@ export default class Octree
         bounds.getSize(size)
 
         //find the max axis value of the size vector
-        const maxSize= Math.max(...[size.x,size.y,size.z])
-        // console.log(`maxSize: ${maxSize}`) //works!
+        const maxSize= Math.max(...size)
 
         //new box size
         const sizeVector= new THREE.Vector3(maxSize,maxSize,maxSize)
+
         //box starts from center, multiply by 0.5 to account for extra length
         sizeVector.multiplyScalar(0.5)
-        // console.log(sizeVector)
         
         //get the center of the box
         const boundsCenter=new THREE.Vector3()
@@ -63,7 +62,7 @@ export default class Octree
      * 
      * @param {*} worldObjects 
      */
-    addObjects(worldObjects)
+    #addObjects(worldObjects)
     {
         worldObjects.forEach(obj => {
             this.rootNode.addObject(obj)
@@ -90,9 +89,6 @@ export default class Octree
         return uniqueIntersections
 
     }
-
-
-
 
     /**
      * Recursively checks children, returns the layers of the thee.js meshes
@@ -134,22 +130,14 @@ export default class Octree
      */
     intersectsObject(node,box,scene)
     {
-        // console.log(node)
         const array= []
 
-        // if(node.isBox3)
         //check if bounding box intersects
         if(node.nodeBounds.intersectsBox(box)&&node.containsObject)
             {
                 //if node is leaf, return with world objects(if there are any)
                 if(node.children==null)
                     {
-                        if(scene){
-                            this.debugDraw(node.nodeBounds,"green",scene)
-                            this.debugDraw(box,"red",scene)
-                        }
-                        
-                        
                         return node.worldObjects
                     }
 
@@ -287,12 +275,150 @@ export default class Octree
             
     }
 
+    //debug
 
-
-    debugDraw(box,color,scene)
+    /**
+     * Recursively adds box visualizations of the octree to the scene
+     * 
+     * @param {*} node 
+     * @param {*} scene 
+     * @param {*} count 
+     * @returns 
+     */
+    #drawBox(node,scene,count)
     {
-        const helper = new THREE.Box3Helper( box, color )
-        scene.add(helper)
+        count=(count!=null)?count:1
+        
+        if(node.children==null)
+            {
+                const center= new THREE.Vector3()
+                const scale= new THREE.Vector3()
+
+                node.nodeBounds.getCenter(center)
+                node.nodeBounds.getSize(scale)
+                scale.multiplyScalar(0.999)
+                const box=new THREE.Box3().setFromCenterAndSize(center,scale)
+
+                let color="white"
+                // console.log(`count:${count}`)
+                switch(count)
+                {
+                    case 1:
+                        color="#ffffff"
+                        break;
+                    case 2:
+                        color="#c8c2ff"
+                        break;
+                    case 3:
+                        color="#7363ff"
+                        break;
+                    case 4:
+                        color="#1a00ff"
+                        break;
+                    case 5:
+                        color="#ff00ec"
+                        break;
+                    case 6:
+                        color="#ff004b"
+                        break;
+                    case 7:
+                        color="#ff0000"
+                        break;
+                    case 8:
+                        color="#ffd000"
+                        break;
+                    case 9:
+                        color="#a4ff00"
+                        break;
+                    default:
+                        color='#00ff87'
+
+                }
+
+                const helper = new THREE.Box3Helper( box, color)
+                node.boxHelper=helper
+                scene.add(helper)
+                return 
+            }
+        
+        
+        node.children.forEach(child=>
+            {
+                this.#drawBox(child,scene,count+1)
+            }
+        )
+        
+            
+    }
+
+    /**
+     * Recursively removes box visualization from the scene
+     * 
+     * @param {*} node 
+     * @param {*} scene 
+     * @returns 
+     */
+    #removeBox(node,scene)
+    {
+        
+        if(node.children==null)
+            {
+
+                scene.remove(node.boxHelper)
+                node.boxHelper.dispose()
+                node.boxHelper=null
+                return 
+            }
+        
+
+        node.children.forEach(child=>
+            {
+                this.#removeBox(child,scene)
+            }
+        )
+        
+            
+    }
+
+    /**
+     * Adds the current octree visualization to the scene
+     * 
+     * @param {*} scene 
+     */
+    showOctree(scene)
+    {
+        this.#drawBox(this.rootNode,scene)
+    }
+    
+    /**
+     * Removes the octree visualization from the scene
+     * 
+     * @param {*} scene 
+     */
+    hideOctree(scene)
+    {
+        this.#removeBox(this.rootNode,scene)
+    }
+
+    debug(gui,scene)
+    {
+        const folder= gui.addFolder('Enviroment Optimizations')
+        const debug={}
+        debug.showOctree=false
+
+        folder.add(debug,'showOctree').onChange(bool=>{
+            if(bool)
+                {
+                    this.showOctree(scene)
+        
+                }
+            else
+            {
+                this.hideOctree(scene)
+        
+            }
+        
+        })
     }
 
     
