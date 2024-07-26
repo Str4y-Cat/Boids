@@ -244,7 +244,7 @@ export default class BoidController
      */
     #debugCount()
     {   
-        this.debug.folder.add(this.debug,'boidCount'). min(1).max(1500).step(4).onChange((count)=>
+        this.debug.folder.add(this.debug,'boidCount'). min(1).max(1000).step(4).onChange((count)=>
         {
             this.boidCount=count
             if(count>this.boidMeshes.length)
@@ -265,40 +265,27 @@ export default class BoidController
     #debugValues()
     {
         
-        this.debug.folder.add(boidConfig.values,"visualRange").min(0.5).max(3).step(0.00001).onChange((num)=>{
-            this.boidLogic.visualRange=num
-            if(this.debug.visualRange)
-                {
-                    this.#debugVisualRange(true)
-                }
-        })
-        this.debug.folder.add(boidConfig.values,"protectedRange").min(0.1).max(2).step(0.00001).onChange((num)=>{
-            this.boidLogic.protectedRange=num
-            if(this.debug.protectedRange)
-            {
-                this.#debugProtectedRange(true)
-            }
-        })
-        this.debug.folder.add(boidConfig.values,"objectAvoidFactor").min(0).max(10).step(0.00001).onChange((num)=>{
+        
+        this.debug.folder.add(boidConfig.values,"objectAvoidFactor").name("Environment Avoid Factor").min(0).max(10).step(0.00001).onChange((num)=>{
             this.boidLogic.objectAvoidFactor=num
         })
-        this.debug.folder.add(boidConfig.values,"enviromentVision").min(0).max(5).step(0.00001)
-        this.debug.folder.add(boidConfig.values,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
+        this.debug.folder.add(boidConfig.values,"enviromentVision").name("Environment Visual range").min(0).max(5).step(0.00001)
+        this.debug.folder.add(boidConfig.values,"cohesionFactor").name("Cohesion Factor").min(0).max(0.05).step(0.00001).onChange((num)=>{
             this.boidLogic.cohesionFactor=num
         })
-        this.debug.folder.add(boidConfig.values,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
+        this.debug.folder.add(boidConfig.values,"matchingFactor").name("Matching Factor").min(0).max(0.1).step(0.00001).onChange((num)=>{
             this.boidLogic.matchingFactor=num
         })
-        this.debug.folder.add(boidConfig.values,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
+        this.debug.folder.add(boidConfig.values,"seperationFactor").name("Seperation Factor").min(0).max(0.5).step(0.00001).onChange((num)=>{
             this.boidLogic.seperationFactor=num
         })
-        this.debug.folder.add(boidConfig.values,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
+        this.debug.folder.add(boidConfig.values,"turnFactor").name("Turn Factor").min(0).max(1).step(0.0001).onChange((num)=>{
             this.boidLogic.turnFactor=num/100
         })
-        this.debug.folder.add(boidConfig.values,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+        this.debug.folder.add(boidConfig.values,"minSpeed").name("Min Speed").min(0).max(10).step(0.001).onChange((num)=>{
             this.boidLogic.minSpeed=num/100
         })
-        this.debug.folder.add(boidConfig.values,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+        this.debug.folder.add(boidConfig.values,"maxSpeed").name("Max Speed").min(0).max(10).step(0.001).onChange((num)=>{
             this.boidLogic.maxSpeed=num/100
         })
         
@@ -401,21 +388,29 @@ export default class BoidController
     {
         this.debug.showProtectedRange=false
         this.debug.showVisualRange=false
-
+        
         this.debug.folder.add(this.debug,'showProtectedRange').onChange((bool)=>
-        {
-            if(!bool)
             {
-                this.scene.remove(this.debug.protectedRange)
-                this.debug.protectedRange.material.dispose()
-                this.debug.protectedRange.geometry.dispose()
-
-            }
-            else
+                if(!bool)
+                {
+                    this.scene.remove(this.debug.protectedRange)
+                    this.debug.protectedRange.material.dispose()
+                    this.debug.protectedRange.geometry.dispose()
+    
+                }
+                else
+                {
+                    
+                    this.#debugProtectedRange()
+                    
+                }
+            })
+    
+        this.debug.folder.add(boidConfig.values,"protectedRange").name("Protected range").min(0.1).max(2).step(0.00001).onChange((num)=>{
+            this.boidLogic.protectedRange=num
+            if(this.debug.protectedRange)
             {
-                
-                this.#debugProtectedRange()
-                
+                this.#debugProtectedRange(true)
             }
         })
 
@@ -433,6 +428,15 @@ export default class BoidController
                     this.#debugVisualRange()
                 }
             })
+        
+        this.debug.folder.add(boidConfig.values,"visualRange").name("Visual range").min(0.5).max(3).step(0.00001).onChange((num)=>{
+            this.boidLogic.visualRange=num
+            if(this.debug.visualRange)
+                {
+                    this.#debugVisualRange(true)
+                }
+        })
+        
         
     }   
     //#endregion
