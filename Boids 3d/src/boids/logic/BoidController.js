@@ -1,5 +1,5 @@
 import BoidLogic from "./BoidLogic";
-import boidConfig from "./boid.config";
+import boidConfig from "../boid.config";
 import * as THREE from 'three'
 
 export default class BoidController

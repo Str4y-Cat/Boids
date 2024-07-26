@@ -5,7 +5,7 @@ export default
         visualRange:0.75046,
         protectedRange:0.38377,
         enviromentVision:0.5,
-        objectAvoidFactor:2,
+        objectAvoidFactor:1,
         cohesionFactor:0.00206,
         matchingFactor:0.06312,
         seperationFactor:0.19269,
@@ -19,7 +19,7 @@ export default
     vision:
     {
         count:183,
-        rayAngleLimit:-0.613,
+        rayAngleLimit:-0.95,
         far:0.5
     }
 }

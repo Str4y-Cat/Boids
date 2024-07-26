@@ -1,5 +1,5 @@
 
-import boidConfig from "./boid.config";
+import boidConfig from "../boid.config";
 export default class BoidLogic
 {
     /**

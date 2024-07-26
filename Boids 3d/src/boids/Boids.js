@@ -3,7 +3,7 @@ import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-
 import BoidController from './logic/BoidController'
 import RayController from './vision/RayController';
 import Octree from './octree/Octree'
-import boidConfig from './logic/boid.config';
+import boidConfig from './boid.config';
 
 // Add the extension functions
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
@@ -29,7 +29,7 @@ export default class Boids
 
     initVision()
     {
-        this.environmentOctree = new Octree(this.environmentObjects,boidConfig.vision.far) 
+        this.environmentOctree = new Octree([],boidConfig.vision.far) 
         this.rayController =new RayController(this.environmentOctree)
     }
    
@@ -38,10 +38,11 @@ export default class Boids
         enviromentObjects.forEach(obj=>{
             obj.geometry.computeBoundingBox();
             obj.geometry.computeBoundsTree();
+            // console.log(obj.geometry)
         })
 
         this.environmentObjects.push(...enviromentObjects)
-        
+        console.log(this.scene)
         this.environmentOctree = new Octree(this.environmentObjects,boidConfig.vision.far)
         this.rayController.environmentOctree=this.environmentOctree 
     }
