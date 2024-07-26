@@ -12,12 +12,14 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, size, scene)
+    constructor(count, box3, scene)
     {
         
         this.scene=scene
 
-        this.boundingBox= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(size,size,size))
+
+        // this.boundingBox= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(size,size,size))
+        this.boundingBox= box3
         this.boidMeshes= []
         this.boidCount=null
         
@@ -227,14 +229,12 @@ export default class BoidController
         //create a gui folder
         this.debug.folder=  gui.addFolder("Boids")
 
-
-        
+        //bounding box visualization
+        this.#debugSolidBorderBox()
         //add count tweak
         this.#debugCount()
         //parameters tweaks
         this.#debugValues()
-        //bounding box visualization
-        this.#debugSolidBorderBox()
         //boid vision visualization
         this.#debugVisionRange()
     }
@@ -244,7 +244,7 @@ export default class BoidController
      */
     #debugCount()
     {   
-        this.debug.folder.add(this.debug,'boidCount'). min(1).max(1000).step(4).onChange((count)=>
+        this.debug.folder.add(this.debug,'boidCount'). min(4).max(1000).step(4).onChange((count)=>
         {
             this.boidCount=count
             if(count>this.boidMeshes.length)
