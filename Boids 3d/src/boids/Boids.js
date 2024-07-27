@@ -21,15 +21,25 @@ export default class Boids
         this.past=0
     }
 
-    initBoids(count,geometry,material)
+    initBoids(count)
     {
         this.boidController= new BoidController(count,this.container,this.scene)
+    }
+
+    setStandardMesh(geometry,material)
+    {
         this.boidController.setStandardMesh(geometry,material) 
+    }
+
+    setModelMesh(model,scale)
+    {
+        // this.boidController.setModelMesh(model)
+        this.boidController.setModels(model,scale)
     }
 
     initVision()
     {
-        this.environmentOctree = new Octree([],boidConfig.vision.far) 
+        this.environmentOctree = new Octree(this.environmentObjects,boidConfig.vision.far) 
         this.rayController =new RayController(this.environmentOctree)
     }
    
@@ -38,11 +48,9 @@ export default class Boids
         enviromentObjects.forEach(obj=>{
             obj.geometry.computeBoundingBox();
             obj.geometry.computeBoundsTree();
-            // console.log(obj.geometry)
         })
 
         this.environmentObjects.push(...enviromentObjects)
-        console.log(this.scene)
         this.environmentOctree = new Octree(this.environmentObjects,boidConfig.vision.far)
         this.rayController.environmentOctree=this.environmentOctree 
     }
@@ -53,6 +61,7 @@ export default class Boids
 
         let slowTick= Math.round(elapsedTime*100)
         if(slowTick!=this.past){
+            //TODO
             intersectingEvironmentObjects= this.rayController.update(this.boidController.boidMeshes,4)
         }
         this.past=slowTick
@@ -73,7 +82,8 @@ export default class Boids
                     intersectingEvironmentObjects=this.#slowUpdate(elapsedTime)
                 }
 
-            this.boidController.update(intersectingEvironmentObjects)
+            this.boidController.update(intersectingEvironmentObjects,elapsedTime)
+            // console.log(elapsedTime)
         }
 
     }
