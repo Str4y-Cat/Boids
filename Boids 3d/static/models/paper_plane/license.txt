@@ -1,0 +1,11 @@
+Model Information:
+* title:	Paper Plane
+* source:	https://sketchfab.com/3d-models/paper-plane-c8d4716dd4cb4da7b00eed5a632e2e21
+* author:	Animated Fox 3D (https://sketchfab.com/Foxcatgaming2)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Paper Plane" (https://sketchfab.com/3d-models/paper-plane-c8d4716dd4cb4da7b00eed5a632e2e21) by Animated Fox 3D (https://sketchfab.com/Foxcatgaming2) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

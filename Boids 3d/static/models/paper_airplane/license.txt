@@ -1,0 +1,11 @@
+Model Information:
+* title:	Paper Airplane
+* source:	https://sketchfab.com/3d-models/paper-airplane-29aa6a99e1d24b52a9d7d9eb2695bdb8
+* author:	kilansky (https://sketchfab.com/kilansky)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Paper Airplane" (https://sketchfab.com/3d-models/paper-airplane-29aa6a99e1d24b52a9d7d9eb2695bdb8) by kilansky (https://sketchfab.com/kilansky) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
