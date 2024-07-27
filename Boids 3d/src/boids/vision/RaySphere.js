@@ -150,8 +150,8 @@ export default class RaySphere
      */
     rotateTo(mesh)
     {
-        
-        this.pointSphere.rotation.copy(mesh.rotation)
+        //[x] convert to rotate with quaternion
+        this.pointSphere.quaternion.setFromRotationMatrix(mesh.rotationMatrix)
         
        return this.toWorldVertices()
     }

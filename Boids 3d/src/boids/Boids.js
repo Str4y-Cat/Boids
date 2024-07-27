@@ -19,6 +19,8 @@ export default class Boids
         this.environmentObjects=[]
 
         this.past=0
+        // this.debug
+        // this.pauseSimulation
     }
 
     initBoids(count)
@@ -62,7 +64,7 @@ export default class Boids
         let slowTick= Math.round(elapsedTime*100)
         if(slowTick!=this.past){
             //TODO
-            intersectingEvironmentObjects= this.rayController.update(this.boidController.boidMeshes,4)
+            intersectingEvironmentObjects= this.rayController.update(this.boidController.getBoidArray(),this.boidController.localBoidBoundingBox,4)
         }
         this.past=slowTick
 
@@ -75,7 +77,7 @@ export default class Boids
         
         
 
-        if(this.boidController)
+        if(this.boidController && !this.debug.pause)
         {
             if(this.rayController)
                 {
@@ -90,8 +92,10 @@ export default class Boids
 
     addDebug(gui)
     {
+        this.debug={pause:false}
+        gui.add(this.debug,'pause').name('Pause Simulation')
         this.boidController.viewDebug(gui)
-        this.rayController.setDebug(gui,this.scene)
+        this.rayController.setDebug(gui,this.scene,this.boidController.getMainBoid())
         this.environmentOctree.debug(gui,this.scene)
     }
 

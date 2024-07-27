@@ -23,7 +23,7 @@ export default class
      * @param {[THREE.Vector3]} boidPositions 
      * @returns {foundIntersections{boidindex,{distance,position}}} found intersections
      */
-    #checkEnviroment(boidPositions, iStart, iEnd)
+    #checkEnviroment(boidPositions,boidBoundingBox, iStart, iEnd)
     {
         if(iStart==null||iEnd==null)
             {
@@ -38,16 +38,33 @@ export default class
         for(let i = iStart; i<iEnd; i++){
 
             //finds environments objects that the boid intersects with
-            const enviromentObjects=this.environmentOctree.getObjects(boidPositions[i])
+            // [x] convert to bounding sphere check
+            let enviromentObjects=[]
+            if(boidBoundingBox)
+            {
+                const size= boidBoundingBox.max.clone()
+                
+                size.sub(boidBoundingBox.min)
+                // boidBoundingBox.getSize(size)
+                // console.log(boidBoundingBox,size)
+
+                const boundingBox= new THREE.Box3().setFromCenterAndSize(boidPositions[i].position,size)
+
+                // console.log(boundingBox)
+                enviromentObjects=this.environmentOctree.getObjects(boundingBox)
+            }
+            
             let environmentIntersections
             
             //if there are intersections, cast the rays
             if(enviromentObjects.length>0)
             {
                 //rotate raySphere to match boid
+
                 const targets= this.raySphere.rotateTo(boidPositions[i])
                 
                 //cast rays on that sphere
+                
                 environmentIntersections = this.raySphere.castRays(targets,boidPositions[i].position, enviromentObjects)
                 
             }
@@ -74,7 +91,7 @@ export default class
      * @param {*} stagger the amount of partitions for the boidPositions. Keep to factor of the length of the array, no greater than length/2
      * @returns 
      */
-    update(boidPoistions, stagger)
+    update(boidPoistions,boidBoundingBox, stagger)
     {
         //update the global stagger variable. 
         this.stagger.count++
@@ -96,15 +113,16 @@ export default class
             //make sure that the stagger you use is a factor of the boidArray.length value
         }
 
-        if(this.debug.showRays)
+        if(this.debug&&this.debug.showRays)
         {
             this.#debugUpdate(boidPoistions[0])
         }
 
         //check the environment based on the window
-        return this.#checkEnviroment(boidPoistions,iStart,iEnd)
+        return this.#checkEnviroment(boidPoistions,boidBoundingBox,iStart,iEnd)
     }
 
+    
 
     /**
      * sets up debug panel for raycasting.
@@ -117,42 +135,47 @@ export default class
      * @param {*} gui lil-gui instance
      * @param {*} scene three.js scene
      */
-    setDebug(gui,scene)
+    setDebug(gui,scene,mainBoid)
     {
         this.debug={}
         const folder= gui.addFolder('Environment Vision')
         
-        this.#debugRays(folder,scene)
-        this.#debugTweakRays(folder,scene)
+        this.#debugRays(folder,scene,mainBoid)
+        this.#debugTweakRays(folder,scene,mainBoid)
     }
 
     
-    #debugUpdate(boidMesh)
+    #debugUpdate(boid)
     {
-        this.debug.pointSphere.position.copy(boidMesh.position)
-        this.debug.pointSphere.rotation.copy(boidMesh.rotation)
+        this.debug.pointSphere.position.copy(boid.position)
+        // console.log(boid)
+        this.debug.pointSphere.quaternion.setFromRotationMatrix(boid.rotationMatrix)
     }
     
-    #debugRays(folder,scene)
+    #debugRays(folder,scene,mainBoid)
     {
         this.debug.showRays=false
         folder.add(this.debug,'showRays').onChange(bool=>{
 
             if(bool)
             {
-                this.#debugSetPointSphere(scene)
+                this.#debugSetPointSphere(scene,mainBoid)
             }
             else{
                 this.#debugRemovePointSphere(scene)
             }
         })
     }
-    #debugSetPointSphere(scene)
+    #debugSetPointSphere(scene,mainBoid)
     {
         this.debug.pointSphere= this.raySphere.getPointSphere()
         const scale=new THREE.Vector3(1,1,1)
         scale.multiplyScalar(this.raySphere.rayFar)
         this.debug.pointSphere.scale.copy(scale)
+        // console.log(mainBoid)
+        this.#debugUpdate(mainBoid)
+
+        // this.debug.pointSphere.position.copy(mainBoid.position)
         scene.add(this.debug.pointSphere)
     }
 
@@ -163,7 +186,7 @@ export default class
         this.debug.pointSphere.geometry.dispose()
     }
 
-    #debugTweakRays(folder,scene)
+    #debugTweakRays(folder,scene,mainBoid)
     {
         //tweak points
         folder.add(this.raySphere,'rayCount').min(1).max(500).step(1).name('Ray Count').onChange((num)=>{
@@ -174,7 +197,7 @@ export default class
             if(this.debug.showRays)
             {
                 this.#debugRemovePointSphere(scene)
-                this.#debugSetPointSphere(scene)
+                this.#debugSetPointSphere(scene,mainBoid)
             }
         })
 
@@ -188,7 +211,7 @@ export default class
             if(this.debug.showRays)
             {
                 this.#debugRemovePointSphere(scene)
-                this.#debugSetPointSphere(scene)
+                this.#debugSetPointSphere(scene,mainBoid)
             }
         })
 
@@ -201,7 +224,7 @@ export default class
             if(this.debug.showRays)
             {
                 this.#debugRemovePointSphere(scene)
-                this.#debugSetPointSphere(scene)
+                this.#debugSetPointSphere(scene,mainBoid)
             }
         })
 

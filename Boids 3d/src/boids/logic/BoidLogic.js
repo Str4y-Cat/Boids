@@ -66,6 +66,7 @@ export default class BoidLogic
                 const vz= (Math.random()-0.5)*2*this.maxSpeed
                 this.boidArray.push(new Boid(x,y,z,vy,vx,vz))
             }
+        
     }
 
     /**
@@ -80,6 +81,7 @@ export default class BoidLogic
             this.boidArray.pop()
             count--
         }
+        
     }
 
     /**

@@ -1,6 +1,7 @@
 import BoidLogic from "./BoidLogic";
 import boidConfig from "../boid.config";
 import * as THREE from 'three'
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 export default class BoidController
 {
@@ -22,8 +23,13 @@ export default class BoidController
         this.boundingBox= box3
         this.boidMeshes= []
         this.boidCount=null
+
+        // [ ] convert to boundning sphere
+       
         
         this.#setBoidLogic(count)
+
+        
     }
 
     //#region boids
@@ -36,6 +42,17 @@ export default class BoidController
     #setBoidLogic(count)
     {
         this.boidLogic=new BoidLogic(count, this.boundingBox)
+    }
+
+    getBoidArray()
+    {
+        return this.boidLogic.boidArray
+    }
+
+    getMainBoid()
+    {
+        return this.boidLogic.boidArray[0]
+
     }
 
     /**
@@ -61,6 +78,31 @@ export default class BoidController
     }
 
     /**
+     * Sets a native geometry mesh for each boid
+     * 
+     * @param {*} geometry - THREE.js geometry
+     * @param {*} material - THREE.js material
+     * @param {bool} rotateX 
+     */
+    setModelMesh(model,rotateX=true)
+    {
+        // //set global geometry
+        // this.material= material
+        // //set global material
+        // this.geometry= geometry
+
+        // if(rotateX){
+        //     geometry.rotateX(-Math.PI * 0.5);
+        // }
+
+        this.model= model.scene
+        this.model.scale.set(0.1, 0.1, 0.1);
+
+        //#addMeshes()
+        this.#addMeshes(this.boidLogic.boidArray)
+    }
+
+    /**
      * Adds all positions in array to mesh array and add to scene
      * 
      * @param {*} boidLogicArray 
@@ -70,29 +112,31 @@ export default class BoidController
     {
 
         //check if mat and geo has been set
-        if(!this.material)
-        {
-            console.log('No material has been set')
-            return
-        }
-        if(!this.geometry)
-        {
-            console.log('No geometry has been set')
-            return
-        }
+        // if(!this.material)
+        // {
+        //     console.log('No material has been set')
+        //     return
+        // }
+        // if(!this.geometry)
+        // {
+        //     console.log('No geometry has been set')
+        //     return
+        // }
         
        //create mesh for each boid position
-        boidLogicArray.forEach((boid) => {
-            this.#createMesh(boid)
-        });
+        // boidLogicArray.forEach((boid) => {
+        //     this.#createMesh(boid)
+        // });
 
-        //update boidcount
-        this.boidCount=this.boidMeshes.length
+        // //update boidcount
+        // this.boidCount=this.boidMeshes.length
         
         
         
  
     }
+
+    
 
     /**
      * creates the three.js mesh for boidLogic object
@@ -101,8 +145,16 @@ export default class BoidController
      */
     #createMesh({x,y,z})
     {
+        let boidMesh
         //create mesh
-        const boidMesh= new THREE.Mesh(this.geometry,this.material)
+        if(this.model)
+        {
+            boidMesh=SkeletonUtils.clone(this.model)
+        }
+        else{
+            boidMesh= new THREE.Mesh(this.geometry,this.material)
+        }
+        
         //set position of mesh
         boidMesh.position.set(x,y,z)
 
@@ -135,15 +187,16 @@ export default class BoidController
     {
         //add new boids to boidLogic instance
         this.boidLogic.addBoids(count)
-
+        console.log(this.boidLogic.boidArray.length)
         //instanciate start and end index values
-        const iStart=this.boidLogic.boidArray.length-count
-        const iEnd= this.boidLogic.boidArray.length
+        // const iStart=this.boidLogic.boidArray.length-count
+        // const iStart=0
+        // const iEnd= this.boidLogic.boidArray.length
 
         //create mesh based on each new boid added
-        for(let i= iStart; i<iEnd;i++){
-            this.#createMesh([this.boidLogic.boidArray[i]])
-        }
+        // for(let i= iStart; i<iEnd;i++){
+        //     this.#createMesh([this.boidLogic.boidArray[i]])
+        // }
     }
 
     /**
@@ -154,15 +207,15 @@ export default class BoidController
     {
         //remove boids from boid logic instance
         this.boidLogic.removeBoids(count)
-
+        console.log(this.getBoidArray().length)
         //instanciate start and end indicies
-        const iStart=this.boidLogic.boidArray.length
-        const iEnd= this.boidLogic.boidArray.length+count
+        // const iStart=this.boidLogic.boidArray.length
+        // const iEnd= this.boidLogic.boidArray.length+count
 
-        //remove meshes
-        for(let i=iStart; i<iEnd;i++){
-            this.#removeMesh()
-        }
+        // //remove meshes
+        // for(let i=iStart; i<iEnd;i++){
+        //     this.#removeMesh()
+        // }
         // console.log(`After pos: ${this.boidLogic.boidArray.length}\nAfter mesh: ${this.boidMeshes.length}`)
 
 
@@ -177,21 +230,36 @@ export default class BoidController
      * 
      * @param {[obj]} environmenObjects 
      */
-    update(environmenObjects)
+    update(environmenObjects,elapsedTime)
     {
         //update the logic
         this.boidLogic.update(environmenObjects)
 
-        //update the meshes
-        this.boidMeshes.forEach((boidMesh,i)=>
+        if(this.dummy)
         {
-            const boid= this.boidLogic.boidArray[i]
+            for ( let i = 0; i< this.getBoidArray().length; i++ ) {
+                // let dummy= new THREE.Object3D()
+                const boid=this.getBoidArray()[i]
+                // const target=new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ)
+    
+                for(let n=0; n<3; n++)
+                    {
+                        // this.dummy[n].position.x=boid.x
+                        this.dummy[n].position.copy(boid.position)
+                        // this.dummy[n].position.y=boid.y
+                        // this.dummy[n].position.z=boid.z
+    
+                        this.dummy[n].quaternion.setFromRotationMatrix(boid.rotationMatrix)
+                        this.dummy[n].updateMatrix();
+                        this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
+                        this.boidInstancedMesh[n].instanceMatrix.needsUpdate=true
+                        
+                    }
+                    // this.mixer.setTime(elapsedTime)
+                    // this.boidInstancedMesh[1].setMorphAt(i,this.dummy[1])
+        }
 
-            boidMesh.position.copy(boid)
-           
-            //rotate correctly
-            boidMesh.lookAt(new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ))
-        })
+        }
 
         //check if debug is active
         if(this.debug)
@@ -199,23 +267,219 @@ export default class BoidController
             //show protected range visualization
             if(this.debug.protectedRange)
             {
-                this.debug.protectedRange.position.copy(this.boidMeshes[0].position)
+                
+                this.debug.protectedRange.position.copy(this.getMainBoid().position)
             }
 
             //show visual range visualization
             if(this.debug.visualRange)
                 {
-                    this.debug.visualRange.position.copy(this.boidMeshes[0].position)
+                    this.debug.visualRange.position.copy(this.getMainBoid().position)
                 }
         }
     }
 
     //#endregion
 
+    //#region 
+    // updateModels(elapsedTime)
+    // {
+    //      // console.log(this.dummy)
+    //      for ( let i = 0; i< this.boidLogic.boidCount; i++ ) {
+    //         // let dummy= new THREE.Object3D()
+    //         const boid=this.boidLogic.boidArray[i]
+    //         // const target=new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ)
+
+    //         for(let n=0; n<3; n++)
+    //             {
+    //                 // this.dummy[n].position.x=boid.x
+    //                 this.dummy[n].position.copy(boid.position)
+    //                 // this.dummy[n].position.y=boid.y
+    //                 // this.dummy[n].position.z=boid.z
+
+    //                 this.dummy[n].quaternion.setFromRotationMatrix(boid.rotationMatrix)
+    //                 this.dummy[n].updateMatrix();
+    //                 this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
+    //                 this.boidInstancedMesh[n].instanceMatrix.needsUpdate=true
+                    
+    //             }
+    //             // this.mixer.setTime(elapsedTime)
+    //             // this.boidInstancedMesh[1].setMorphAt(i,this.dummy[1])
+            
+            
+    // }
+    // // this.boidInstancedMesh[1].morphTexture.needsUpdate=true
+
+    // }
+
+    setModels(model,maxScale)
+    {
+        this.modelScale=maxScale
+        const glb=model
+        // console.log(glb)
+        // console.log(glb)
+        this.dummy=[]
+        this.dummy.push(glb.scene.children[ 0 ].children[ 0 ].children[ 0 ]);
+        this.dummy.push(glb.scene.children[ 0 ].children[ 0 ].children[ 1 ]);
+        this.dummy.push(glb.scene.children[ 0 ].children[ 0 ].children[ 2 ]);
+
+        //expand the boid bounding box
+        // [ ] convert to bounding sphere
+        if(!this.localBoidBoundingBox)
+        {
+            this.localBoidBoundingBox=new THREE.Box3(new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,0))
+
+        }
+        this.dummy.forEach(obj=>{
+            this.localBoidBoundingBox.expandByObject(obj)
+        })
+        this.localBoidBoundingBox2=this.localBoidBoundingBox.clone()
+        this.localBoidBoundingBox.min.multiplyScalar(0.1*this.modelScale)
+        this.localBoidBoundingBox.max.multiplyScalar(0.1*this.modelScale)
+        
+
+        // this.scene.add(this.dummy)
+        this.boidInstancedMesh=[]
+
+        this.boidInstancedMesh[0] = new THREE.InstancedMesh( this.dummy[0].geometry, new THREE.MeshBasicMaterial( {
+            color:"orange"
+        } ), this.boidLogic.boidCount );
+        this.boidInstancedMesh[1]= new THREE.InstancedMesh( this.dummy[1].geometry, new THREE.MeshBasicMaterial( {
+            color:'white'
+
+        } ), this.boidLogic.boidCount );
+        this.boidInstancedMesh[2] = new THREE.InstancedMesh( this.dummy[2].geometry, new THREE.MeshBasicMaterial( {
+
+            color:'black'
+        } ), this.boidLogic.boidCount );
+       
+        // this.boidInstancedMesh[1].updateMorphTargets() 
+        // this.boidInstancedMesh[2].updateMorphTargets() 
+        // this.boidInstancedMesh[3].updateMorphTargets() 
+        // console.log(this.boidInstancedMesh[1])
+
+        // mesh.castShadow = true;
+        // let temp
+        for ( let i = 0; i < this.boidLogic.boidCount; i ++ ) {
+            const boid=this.boidLogic.boidArray[i]
+
+            const scale= Math.max(Math.random(),this.modelScale)
+
+            for(let n=0; n<3; n++)
+                {
+
+                    this.dummy[n].position.set(boid.x,boid.y,boid.z)
+                    this.dummy[n].scale.set(0.1*scale,0.1*scale,0.1*scale)
+                    this.dummy[n].updateMatrix();
+
+                    if(n==1)
+                        {
+                        // this.boidInstancedMesh[n].setColorAt( i, new THREE.Color( this.randomColor() ) );
+                        }
+
+                    this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
+
+                }
+
+
+
+
+                // this.dummy[1].position.x=this.boids.boidLogic.boidArray[i].x
+            
+        }
+        
+        this.scene.add( this.boidInstancedMesh[0] );
+        this.scene.add( this.boidInstancedMesh[1] );
+        this.scene.add( this.boidInstancedMesh[2] );
+
+        console.log(this.boidInstancedMesh)
+
+        this.mixer = new THREE.AnimationMixer( glb.scene );
+        console.log(glb)
+        const action = this.mixer.clipAction( glb.animations[ 0 ] );
+        // console.log(action)
+        action.play();
+        
+    }
+
+    changeModelCount()
+    {
+        this.boidInstancedMesh.forEach(obj=>{
+            this.scene.remove(obj)
+            obj.geometry.dispose()
+            obj.material.dispose()
+        })
+        const count= this.getBoidArray().length
+        console.log(count)
+
+        this.boidInstancedMesh[0] = new THREE.InstancedMesh( this.dummy[0].geometry, new THREE.MeshBasicMaterial( {
+            color:"orange"
+        } ), count );
+        this.boidInstancedMesh[1]= new THREE.InstancedMesh( this.dummy[1].geometry, new THREE.MeshBasicMaterial( {
+            color:'white'
+
+        } ), count );
+        this.boidInstancedMesh[2] = new THREE.InstancedMesh( this.dummy[2].geometry, new THREE.MeshBasicMaterial( {
+
+            color:'black'
+        } ), count );
+       
+        // this.boidInstancedMesh[1].updateMorphTargets() 
+        // this.boidInstancedMesh[2].updateMorphTargets() 
+        // this.boidInstancedMesh[3].updateMorphTargets() 
+        // console.log(this.boidInstancedMesh[1])
+
+        // mesh.castShadow = true;
+        // let temp
+        for ( let i = 0; i < count; i ++ ) {
+            const boid=this.boidLogic.boidArray[i]
+
+            const scale= Math.max(Math.random(),this.modelScale)
+
+            for(let n=0; n<3; n++)
+                {
+
+                    this.dummy[n].position.set(boid.x,boid.y,boid.z)
+                    this.dummy[n].scale.set(0.1*scale,0.1*scale,0.1*scale)
+                    this.dummy[n].updateMatrix();
+
+                    if(n==1)
+                        {
+                        // this.boidInstancedMesh[n].setColorAt( i, new THREE.Color( this.randomColor() ) );
+                        }
+
+                    this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
+
+                }
+
+
+
+
+                // this.dummy[1].position.x=this.boids.boidLogic.boidArray[i].x
+            
+        }
+        
+        this.scene.add( this.boidInstancedMesh[0] );
+        this.scene.add( this.boidInstancedMesh[1] );
+        this.scene.add( this.boidInstancedMesh[2] );
+
+        // console.log(this.boidInstancedMesh)
+
+        // this.mixer = new THREE.AnimationMixer( glb.scene );
+        // console.log(glb)
+        // const action = this.mixer.clipAction( glb.animations[ 0 ] );
+        // // console.log(action)
+        // action.play();
+    }
+
     
+
+    
+    //#endregion
 
 
     //#region DEBUG
+
     /**
      * Set up the debug panel
      * 
@@ -224,10 +488,11 @@ export default class BoidController
     viewDebug(gui)
     {
         this.debug= {}
-        this.debug.boidCount= this.boidCount
+        // this.debug.boidCount= this.boidCount
 
         //create a gui folder
         this.debug.folder=  gui.addFolder("Boids")
+        this.debug.boidCount= this.getBoidArray().length
 
         //bounding box visualization
         this.#debugSolidBorderBox()
@@ -244,16 +509,20 @@ export default class BoidController
      */
     #debugCount()
     {   
-        this.debug.folder.add(this.debug,'boidCount'). min(4).max(1000).step(4).onChange((count)=>
+
+        this.debug.folder.add(this.debug,'boidCount'). min(4).max(1000).step(4).onFinishChange((count)=>
         {
-            this.boidCount=count
-            if(count>this.boidMeshes.length)
+            
+            if(count>this.getBoidArray().length)
                 {
-                    this.#addBoids(count-this.boidMeshes.length)
+                    this.#addBoids(count-this.getBoidArray().length)
+                    this.changeModelCount(count)
                 }
-            if(count<this.boidMeshes.length)
+            if(count<this.getBoidArray().length)
                 {
-                    this.#removeBoids(this.boidMeshes.length-count)
+                    this.#removeBoids(this.getBoidArray().length-count)
+                    this.changeModelCount(count)
+
                 }
         })
 
@@ -333,6 +602,7 @@ export default class BoidController
             
 
             this.debug.protectedRange.scale.copy(updateScale)
+            this.debug.protectedRange.position.copy(this.getMainBoid().position)
 
             this.scene.add(this.debug.protectedRange)
         }
@@ -364,6 +634,7 @@ export default class BoidController
             this.debug.visualRange= new THREE.Mesh(geometry,material)
 
             const updateScale= new THREE.Vector3(1,1,1).multiplyScalar(boidConfig.values.visualRange)
+            this.debug.visualRange.position.copy(this.getMainBoid().position)
             
 
             this.debug.visualRange.scale.copy(updateScale)

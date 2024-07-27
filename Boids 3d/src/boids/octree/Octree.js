@@ -70,7 +70,7 @@ export default class Octree
     }
 
     /**
-     * Recursively checks children, returns a list of THREE.JS Meshes that intersect with the provided object
+     * Recursively checks children, returns a list of THREE.JS Meshes that intersect with the provided object or box3
      * 
      * @param {*} mesh 
      * @param {*} scene 
@@ -82,8 +82,11 @@ export default class Octree
         if(!obj.isBox3||obj.isBox3==null){
              box= new THREE.Box3().setFromObject(obj)
         }
+        // console.log(box)
+        const boundingSphere= new THREE.Sphere()
+        box.getBoundingSphere(boundingSphere) 
         
-        const intersections=this.intersectsObject(this.rootNode,box,scene)
+        const intersections=this.intersectsObject(this.rootNode,boundingSphere,scene)
         const uniqueIntersections = [...new Map(intersections.map(item => [item.uuid, item])).values()]
 
         return uniqueIntersections
@@ -128,12 +131,12 @@ export default class Octree
      * @param {Object3d} scene 
      * @returns Three.Mesh[]
      */
-    intersectsObject(node,box,scene)
+    intersectsObject(node,sphere)
     {
         const array= []
 
         //check if bounding box intersects
-        if(node.nodeBounds.intersectsBox(box)&&node.containsObject)
+        if(node.nodeBounds.intersectsSphere(sphere)&&node.containsObject)
             {
                 //if node is leaf, return with world objects(if there are any)
                 if(node.children==null)
@@ -147,10 +150,10 @@ export default class Octree
                         //recursivly checks children that fit criteria:
                         // - child bounds must intersect with the box
                         // - node must contain an object
-                        if(node.childBounds[i].intersectsBox(box)&&node.containsObject)
+                        if(node.childBounds[i].intersectsSphere(sphere)&&node.containsObject)
                             {
                                 //recurisve call
-                                const value= this.intersectsObject(node.children[i],box,scene)
+                                const value= this.intersectsObject(node.children[i],sphere)
                                 if(value)
                                     {
                                         //  NOTE: not sure if this is the best option. multiple calls may outweigh the O()time of map
