@@ -187,16 +187,7 @@ export default class BoidController
     {
         //add new boids to boidLogic instance
         this.boidLogic.addBoids(count)
-        console.log(this.boidLogic.boidArray.length)
-        //instanciate start and end index values
-        // const iStart=this.boidLogic.boidArray.length-count
-        // const iStart=0
-        // const iEnd= this.boidLogic.boidArray.length
-
-        //create mesh based on each new boid added
-        // for(let i= iStart; i<iEnd;i++){
-        //     this.#createMesh([this.boidLogic.boidArray[i]])
-        // }
+        
     }
 
     /**
@@ -242,7 +233,7 @@ export default class BoidController
                 const boid=this.getBoidArray()[i]
                 // const target=new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ)
     
-                for(let n=0; n<3; n++)
+                for(let n=0; n<this.dummy.length; n++)
                     {
                         // this.dummy[n].position.x=boid.x
                         this.dummy[n].position.copy(boid.position)
@@ -282,49 +273,53 @@ export default class BoidController
     //#endregion
 
     //#region 
-    // updateModels(elapsedTime)
-    // {
-    //      // console.log(this.dummy)
-    //      for ( let i = 0; i< this.boidLogic.boidCount; i++ ) {
-    //         // let dummy= new THREE.Object3D()
-    //         const boid=this.boidLogic.boidArray[i]
-    //         // const target=new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ)
-
-    //         for(let n=0; n<3; n++)
-    //             {
-    //                 // this.dummy[n].position.x=boid.x
-    //                 this.dummy[n].position.copy(boid.position)
-    //                 // this.dummy[n].position.y=boid.y
-    //                 // this.dummy[n].position.z=boid.z
-
-    //                 this.dummy[n].quaternion.setFromRotationMatrix(boid.rotationMatrix)
-    //                 this.dummy[n].updateMatrix();
-    //                 this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
-    //                 this.boidInstancedMesh[n].instanceMatrix.needsUpdate=true
-                    
-    //             }
-    //             // this.mixer.setTime(elapsedTime)
-    //             // this.boidInstancedMesh[1].setMorphAt(i,this.dummy[1])
-            
-            
-    // }
-    // // this.boidInstancedMesh[1].morphTexture.needsUpdate=true
-
-    // }
-
-    setModels(model,maxScale)
+    
+    //createDummyMesh
+    createDummyMesh(model)
     {
-        this.modelScale=maxScale
-        const glb=model
-        // console.log(glb)
-        // console.log(glb)
         this.dummy=[]
-        this.dummy.push(glb.scene.children[ 0 ].children[ 0 ].children[ 0 ]);
-        this.dummy.push(glb.scene.children[ 0 ].children[ 0 ].children[ 1 ]);
-        this.dummy.push(glb.scene.children[ 0 ].children[ 0 ].children[ 2 ]);
+        // this.dummy.push(...this.createDummyMesh(model));
+        
+        //native mesh using geometry
+        if(!model.scene)
+        {
+            this.dummy.push(model);
+            return
+        }
+        //gltf model
+        const baseMesh= this.getBaseMesh(model.scene)
+        this.dummy.push(...baseMesh.children);
+        return 
+    }
+    getBaseMesh(mesh,parent)
+    {
+        // console.log(mesh)
+
+        if(mesh.children.length<1)
+        {
+            
+            return parent
+        }
+        parent= mesh
+
+        return this.getBaseMesh(mesh.children[0],parent)
+    }
+    //createLocalBoundingBox
+    //createInstancedMesh
+
+
+    setModels(model,minScale,defaultMaterial)
+    {
+        // console.log(this.createDummyMesh(model))
+        
+
+        this.modelScale=minScale
+        const glb=model
+        // console.log('glb',glb)
+        this.createDummyMesh(model)
+
 
         //expand the boid bounding box
-        // [ ] convert to bounding sphere
         if(!this.localBoidBoundingBox)
         {
             this.localBoidBoundingBox=new THREE.Box3(new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,0))
@@ -333,135 +328,119 @@ export default class BoidController
         this.dummy.forEach(obj=>{
             this.localBoidBoundingBox.expandByObject(obj)
         })
-        this.localBoidBoundingBox2=this.localBoidBoundingBox.clone()
+        
         this.localBoidBoundingBox.min.multiplyScalar(0.1*this.modelScale)
         this.localBoidBoundingBox.max.multiplyScalar(0.1*this.modelScale)
         
 
-        // this.scene.add(this.dummy)
         this.boidInstancedMesh=[]
 
-        this.boidInstancedMesh[0] = new THREE.InstancedMesh( this.dummy[0].geometry, new THREE.MeshBasicMaterial( {
-            color:"orange"
-        } ), this.boidLogic.boidCount );
-        this.boidInstancedMesh[1]= new THREE.InstancedMesh( this.dummy[1].geometry, new THREE.MeshBasicMaterial( {
-            color:'white'
+        //create instance of instanced mesh
+        
 
-        } ), this.boidLogic.boidCount );
-        this.boidInstancedMesh[2] = new THREE.InstancedMesh( this.dummy[2].geometry, new THREE.MeshBasicMaterial( {
+        this.dummy.forEach((dummyMesh,i)=>
+        {
+            const materialColor= dummyMesh.material.color
+            let material=new THREE.MeshLambertMaterial( {color:new THREE.Color(materialColor)} )
 
-            color:'black'
-        } ), this.boidLogic.boidCount );
-       
-        // this.boidInstancedMesh[1].updateMorphTargets() 
-        // this.boidInstancedMesh[2].updateMorphTargets() 
-        // this.boidInstancedMesh[3].updateMorphTargets() 
-        // console.log(this.boidInstancedMesh[1])
-
-        // mesh.castShadow = true;
-        // let temp
-        for ( let i = 0; i < this.boidLogic.boidCount; i ++ ) {
+            if(defaultMaterial)
+            {
+                material=defaultMaterial
+            }
+            
+            this.boidInstancedMesh[i] = new THREE.InstancedMesh( dummyMesh.geometry, material, this.getBoidArray().length );
+        }
+        )
+        
+        //fill instanced mesh
+        for ( let i = 0; i < this.getBoidArray().length; i ++ ) {
             const boid=this.boidLogic.boidArray[i]
 
             const scale= Math.max(Math.random(),this.modelScale)
 
-            for(let n=0; n<3; n++)
+            for(let n=0; n<this.dummy.length; n++)
                 {
 
-                    this.dummy[n].position.set(boid.x,boid.y,boid.z)
+                    this.dummy[n].position.copy(boid.position)
                     this.dummy[n].scale.set(0.1*scale,0.1*scale,0.1*scale)
                     this.dummy[n].updateMatrix();
-
-                    if(n==1)
-                        {
-                        // this.boidInstancedMesh[n].setColorAt( i, new THREE.Color( this.randomColor() ) );
-                        }
 
                     this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
 
                 }
-
-
-
-
-                // this.dummy[1].position.x=this.boids.boidLogic.boidArray[i].x
             
         }
         
-        this.scene.add( this.boidInstancedMesh[0] );
-        this.scene.add( this.boidInstancedMesh[1] );
-        this.scene.add( this.boidInstancedMesh[2] );
+        for (let i = 0; i < this.boidInstancedMesh.length; i++) {
+            this.scene.add( this.boidInstancedMesh[i] );
+        }
+        
 
-        console.log(this.boidInstancedMesh)
+        
 
-        this.mixer = new THREE.AnimationMixer( glb.scene );
-        console.log(glb)
-        const action = this.mixer.clipAction( glb.animations[ 0 ] );
-        // console.log(action)
-        action.play();
+        // this.mixer = new THREE.AnimationMixer( glb.scene );
+        
+        // const action = this.mixer.clipAction( glb.animations[ 0 ] );
+        // // console.log(action)
+        // action.play();
         
     }
 
-    changeModelCount()
+    removeInstancedMesh()
     {
         this.boidInstancedMesh.forEach(obj=>{
             this.scene.remove(obj)
             obj.geometry.dispose()
             obj.material.dispose()
         })
+    }
+
+    removeDummyMesh()
+    {
+        this.dummy.forEach(obj=>{
+            this.scene.remove(obj)
+            obj.geometry.dispose()
+            obj.material.dispose()
+        })
+    }
+    changeModelCount()
+    {
+        this.removeInstancedMesh()
         const count= this.getBoidArray().length
-        console.log(count)
-
-        this.boidInstancedMesh[0] = new THREE.InstancedMesh( this.dummy[0].geometry, new THREE.MeshBasicMaterial( {
-            color:"orange"
-        } ), count );
-        this.boidInstancedMesh[1]= new THREE.InstancedMesh( this.dummy[1].geometry, new THREE.MeshBasicMaterial( {
-            color:'white'
-
-        } ), count );
-        this.boidInstancedMesh[2] = new THREE.InstancedMesh( this.dummy[2].geometry, new THREE.MeshBasicMaterial( {
-
-            color:'black'
-        } ), count );
-       
-        // this.boidInstancedMesh[1].updateMorphTargets() 
-        // this.boidInstancedMesh[2].updateMorphTargets() 
-        // this.boidInstancedMesh[3].updateMorphTargets() 
-        // console.log(this.boidInstancedMesh[1])
-
-        // mesh.castShadow = true;
-        // let temp
-        for ( let i = 0; i < count; i ++ ) {
-            const boid=this.boidLogic.boidArray[i]
-
-            const scale= Math.max(Math.random(),this.modelScale)
-
-            for(let n=0; n<3; n++)
-                {
-
-                    this.dummy[n].position.set(boid.x,boid.y,boid.z)
-                    this.dummy[n].scale.set(0.1*scale,0.1*scale,0.1*scale)
-                    this.dummy[n].updateMatrix();
-
-                    if(n==1)
-                        {
-                        // this.boidInstancedMesh[n].setColorAt( i, new THREE.Color( this.randomColor() ) );
-                        }
-
-                    this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
-
-                }
-
-
-
-
-                // this.dummy[1].position.x=this.boids.boidLogic.boidArray[i].x
-            
-        }
         
-        this.scene.add( this.boidInstancedMesh[0] );
-        this.scene.add( this.boidInstancedMesh[1] );
-        this.scene.add( this.boidInstancedMesh[2] );
+
+        this.dummy.forEach((dummyMesh,i)=>
+            {
+                const materialColor= dummyMesh.material.color
+                
+                this.boidInstancedMesh[i] = new THREE.InstancedMesh( dummyMesh.geometry, new THREE.MeshBasicMaterial( {
+                    color:new THREE.Color(materialColor)
+                } ), this.getBoidArray().length );
+            }
+            )
+            
+            //fill instanced mesh
+            for ( let i = 0; i < this.getBoidArray().length; i ++ ) {
+                const boid=this.boidLogic.boidArray[i]
+    
+                const scale= Math.max(Math.random(),this.modelScale)
+    
+                for(let n=0; n<this.dummy.length; n++)
+                    {
+    
+                        this.dummy[n].position.copy(boid.position)
+                        this.dummy[n].scale.set(0.1*scale,0.1*scale,0.1*scale)
+                        this.dummy[n].updateMatrix();
+    
+                        this.boidInstancedMesh[n].setMatrixAt( i, this.dummy[n].matrix );
+    
+                    }
+                
+            }
+            
+            for (let i = 0; i < this.boidInstancedMesh.length; i++) {
+                this.scene.add( this.boidInstancedMesh[i] );
+            }
 
         // console.log(this.boidInstancedMesh)
 
@@ -472,6 +451,12 @@ export default class BoidController
         // action.play();
     }
 
+    changeModelMesh(newModel,minScale,defaultMaterial){
+        this.removeDummyMesh()
+        this.removeInstancedMesh()
+
+        this.setModels(newModel,minScale,defaultMaterial)
+    }
     
 
     
@@ -510,7 +495,7 @@ export default class BoidController
     #debugCount()
     {   
 
-        this.debug.folder.add(this.debug,'boidCount'). min(4).max(1000).step(4).onFinishChange((count)=>
+        this.debug.folder.add(this.debug,'boidCount').name("Entity Count"). min(4).max(1000).step(4).onFinishChange((count)=>
         {
             
             if(count>this.getBoidArray().length)
@@ -535,10 +520,10 @@ export default class BoidController
     {
         
         
-        this.debug.folder.add(boidConfig.values,"objectAvoidFactor").name("Environment Avoid Factor").min(0).max(10).step(0.00001).onChange((num)=>{
+        this.debug.folder.add(boidConfig.values,"objectAvoidFactor").name("Object Avoid Factor").min(0).max(4).step(0.00001).onChange((num)=>{
             this.boidLogic.objectAvoidFactor=num
         })
-        this.debug.folder.add(boidConfig.values,"enviromentVision").name("Environment Visual range").min(0).max(5).step(0.00001)
+        this.debug.folder.add(boidConfig.values,"enviromentVision").name("Object Visual range").min(0).max(2).step(0.00001)
         this.debug.folder.add(boidConfig.values,"cohesionFactor").name("Cohesion Factor").min(0).max(0.05).step(0.00001).onChange((num)=>{
             this.boidLogic.cohesionFactor=num
         })
@@ -566,11 +551,11 @@ export default class BoidController
     #debugSolidBorderBox()
     {
         this.debug.showBoundingBox=false
-        this.debug.folder.add(this.debug,'showBoundingBox').onChange(()=>
+        this.debug.folder.add(this.debug,'showBoundingBox').name("Show Bounding Box").onChange(()=>
         {
             if(!this.debug.boundingBoxHelper)
                 {
-                    this.debug.boundingBoxHelper= new THREE.Box3Helper(this.boundingBox)
+                    this.debug.boundingBoxHelper= new THREE.Box3Helper(this.boundingBox,new THREE.Color('#ff1084'))
                     this.scene.add(this.debug.boundingBoxHelper)
                 }
             else{
@@ -627,7 +612,7 @@ export default class BoidController
             const material= new THREE.MeshBasicMaterial({
                 color:'#5bff33',
                 opacity:0.5,
-                transparent:true
+                transparent:true,
             })
             const geometry= new THREE.SphereGeometry()
 
@@ -660,7 +645,7 @@ export default class BoidController
         this.debug.showProtectedRange=false
         this.debug.showVisualRange=false
         
-        this.debug.folder.add(this.debug,'showProtectedRange').onChange((bool)=>
+        this.debug.folder.add(this.debug,'showProtectedRange').name("Show Protected Range").onChange((bool)=>
             {
                 if(!bool)
                 {
@@ -685,7 +670,7 @@ export default class BoidController
             }
         })
 
-        this.debug.folder.add(this.debug,'showVisualRange').onChange((bool)=>
+        this.debug.folder.add(this.debug,'showVisualRange').name("Show Visual Range").onChange((bool)=>
             {
                 if(!bool)
                 {
