@@ -3,7 +3,7 @@ import GUI from 'lil-gui'
 import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 import Stats from 'three/addons/libs/stats.module.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-
+import * as BACKGROUND from './showCase scripts/background'
 
 import Boids from './boids/Boids';
 
@@ -15,13 +15,17 @@ import Boids from './boids/Boids';
 
 
 //set up debug
-const gui = new GUI()
+const gui = new GUI({container:document.getElementById('gui1'),title:'Simulation Controls',closeFolders:true})
+const gui2 = new GUI({container:document.getElementById('gui2'),title:'Aesthetic Presets',closeFolders:true})
 const debug= {}
 
 
 const textureLoader= new THREE.TextureLoader()
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
 const matCapTexture2= textureLoader.load('/textures/matCap2.png')
+const matCapTexture3= textureLoader.load('/textures/matCap3.png')
+const matCapTexture4= textureLoader.load('/textures/matCap4.png')
+const matCapTexture5= textureLoader.load('/textures/matCap5.png')
 
 
 
@@ -32,7 +36,11 @@ const canvas = document.querySelector('.webgl')
 
 //create scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
+// scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
+scene.background = new THREE.Color("#fff8f0");
+// scene.background = new THREE.Color("#25231f");
+// scene.background = new THREE.Color("#0f1f58");
+
 // scene.fog = new THREE.Fog( scene.background, 1, 10 );
 
 // const axisHelper= new THREE.AxesHelper(0.3)
@@ -66,26 +74,6 @@ window.addEventListener('resize',()=>
 /**
  * floor
  */
-debug.floorWidth=5
-debug.floorLength=10
-const floorGeometry= new THREE.PlaneGeometry(debug.floorWidth,debug.floorLength,5,10)
-floorGeometry.computeBoundingBox();
-floorGeometry.computeBoundsTree();
-const floorMaterial= new THREE.MeshBasicMaterial(
-    {
-        color:"red",
-        wireframe:true
-    })
-const floor= new THREE.Mesh(
-    floorGeometry,
-    floorMaterial
-)
-floor.rotation.x=-Math.PI/2
-floor.position.y-=debug.floorWidth/2
-floor.layers.enable( 1 );
-
-// floor.position.x=1
-scene.add(floor)
 
 
 
@@ -94,114 +82,6 @@ scene.add(floor)
  * objects to avoid
  */
 
-const dragMaterial= new THREE.MeshPhongMaterial({color:"#ff5733"})
-const dragGeometry1= new THREE.BoxGeometry(1,1,1)
-
-
-// const dragGeometry1= new THREE.TorusGeometry(1)
-const environmentObjects=[]
-
-const createRandom=()=>
-    {
-        
-        for(let i=0; i<5; i++)
-            {
-                const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-                mesh.scale.x=Math.max(Math.random(),0.4)
-                mesh.scale.y=Math.max(Math.random(),0.4)
-                mesh.scale.z=Math.max(Math.random(),0.4)
-                // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
-                mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
-                mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
-                mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
-        
-                // console.log(mesh.rotation.x)
-                
-                // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
-                mesh.position.x=(Math.random()-0.5)*debug.floorWidth
-                mesh.position.y=(Math.random()-0.5)*debug.floorWidth
-                mesh.position.z=(Math.random()-0.5)*debug.floorLength
-                
-                mesh.layers.enable( 1 );
-               
-                scene.add(mesh)
-                environmentObjects.push(mesh)
-            }
-
-        const geometry2= new THREE.TorusGeometry(1)
-        for(let i=0; i<5; i++)
-            {
-                const mesh= new THREE.Mesh(geometry2,dragMaterial )
-                const random= Math.max(Math.random(),0.4)
-                mesh.scale.x=random
-                mesh.scale.y=random
-                mesh.scale.z=random
-                // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
-                mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
-                mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
-                mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
-        
-                // console.log(mesh.rotation.x)
-                
-                // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
-                mesh.position.x=(Math.random()-0.5)*debug.floorWidth
-                mesh.position.y=(Math.random()-0.5)*debug.floorWidth
-                mesh.position.z=(Math.random()-0.5)*debug.floorLength
-                
-                mesh.layers.enable( 1 );
-                
-                scene.add(mesh)
-                environmentObjects.push(mesh)
-            }
-        
-    }
-
-
-const createGrid=()=>{
-    for(let y=-2; y<=2; y++)
-        {
-            for(let x = -2 ; x<=2;x++)
-                {
-                    for (let z = -2 ; z<=2;z++ )
-                        {
-                            const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-                            mesh.scale.x=0.3
-                            mesh.scale.y=0.3
-                            mesh.scale.z=0.3
-                            // // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
-                            // mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
-                            // mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
-                            // mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
-                    
-                            // console.log(mesh.rotation.x)
-                            
-                            // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
-                            mesh.position.x=x
-                            mesh.position.y=y
-                            mesh.position.z=z
-                            
-                            mesh.layers.enable( 1 );
-                           
-                            scene.add(mesh)
-                            environmentObjects.push(mesh)
-                        }
-                }
-        }
-}
-
-const createWall=()=>{
-    const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-        mesh.scale.x=Math.abs(Math.random()-0.5)
-    mesh.scale.y=2.5
-    mesh.position.y=-1.25
-        mesh.scale.z=5
-    mesh.layers.enable( 1 );
-    scene.add(mesh)
-
-    environmentObjects.push(mesh,floor)
-    }
-
-createRandom()
 
 // createGrid()
 //#endregion
@@ -231,21 +111,10 @@ document.body.appendChild( stats.dom );
 /**
  * mouse events
  */
-debug.keyDown
 
-window.addEventListener('keydown',(e)=>
-{
-
-    // console.log(e)
-    const currentKey=e.key
-
-    debug.keyDown=currentKey
-
-})
 
 
 //#endregion
-
 
 
 
@@ -253,17 +122,16 @@ window.addEventListener('keydown',(e)=>
 /**
  * BOIDS
  */
-const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
-const material = new THREE.MeshMatcapMaterial( {matcap:matCapTexture} );
+const envSizes={width:5, length:10,height:5}
+let environmentObjects=[]
 
-const box = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(debug.floorWidth,debug.floorWidth,debug.floorLength))
+
+const box = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(envSizes.length,envSizes.width,envSizes.width))
 const boids= new Boids(scene, box)
 
 boids.initBoids(400)
-// boids.setStandardMesh(geometry,material)
 boids.initVision()
-boids.addEnvironmentObjects(environmentObjects)
-// boids.
+
 
 const gltfLoader= new GLTFLoader()
 // gltfLoader.load('./models/paper_plane/scene.gltf',(gltf)=>{
@@ -272,11 +140,19 @@ const gltfLoader= new GLTFLoader()
 //     // scene.add(gltf.scene)
 //     boids.setModelMesh(gltf,4)
 // })
-
+let fishModel
+let planeModel
 gltfLoader.load('./models/fish/Fish.gltf',(gltf)=>{
-    
+    fishModel=gltf
     // scene.add(gltf.scene)
     boids.setModelMesh(gltf,0.6)
+
+})
+gltfLoader.load('./models/paper_plane/paper_plane.gltf',(gltf)=>{
+    planeModel=gltf
+    // planeModel.children[0].rotateX(90)
+    console.log(planeModel)
+
 })
 boids.addDebug(gui)
 
@@ -286,6 +162,75 @@ boids.addDebug(gui)
 
 
 
+
+
+
+const addBackground=(environmentObjects,callback)=>
+    {
+        BACKGROUND.removeBackground(environmentObjects,scene)
+        
+        environmentObjects=  callback(envSizes.length,envSizes.width,envSizes.height)
+        boids.addEnvironmentObjects(environmentObjects,true)
+        scene.add(...environmentObjects )
+        boids.resetDebug(gui)
+        return environmentObjects
+    }
+    environmentObjects=addBackground(environmentObjects,BACKGROUND.createRandom)
+    const aestheticPresets= {}
+aestheticPresets.backgroundColor="#fff8f0"
+aestheticPresets.randomObj=()=>{environmentObjects=addBackground(environmentObjects,BACKGROUND.createRandom)}
+aestheticPresets.gridObj=()=>{environmentObjects=addBackground(environmentObjects,BACKGROUND.createGrid)}
+aestheticPresets.wallObj=()=>{environmentObjects=addBackground(environmentObjects,BACKGROUND.createWall)}
+
+const testMesh= new THREE.Mesh(new THREE.SphereGeometry(0.1),new THREE.MeshBasicMaterial({color:'red'}))
+const planeMaterial= new THREE.MeshLambertMaterial({color:'#efc46d',side:THREE.DoubleSide})
+
+aestheticPresets.nativeGeometry=()=>{boids.changeModelMesh(testMesh,2)}
+aestheticPresets.fishGeomery=()=>
+    {if(fishModel)
+    {
+        boids.changeModelMesh(fishModel,0.6)
+    }
+    else{
+        console.log('fish model doesnt exitst')
+    }}
+
+aestheticPresets.planeGeometry=()=>{
+    if(planeModel)
+    {
+        boids.changeModelMesh(planeModel,0.6,planeMaterial)
+    }
+    else{
+        console.log('plane Model doesnt exitst')
+    }}
+
+
+const envObjFolder= gui2.addFolder('Environment Objects')
+const bmFolder= gui2.addFolder('Boid Models')
+const bgFolder= gui2.addFolder('Background')
+
+envObjFolder.add(aestheticPresets,"randomObj").name("Random Objects")
+envObjFolder.add(aestheticPresets,"gridObj").name("Grid")
+envObjFolder.add(aestheticPresets,"wallObj").name("Wall")
+
+bmFolder.add(aestheticPresets,"nativeGeometry").name("Native Geometry")
+bmFolder.add(aestheticPresets,"fishGeomery").name("Fish Model")
+bmFolder.add(aestheticPresets,"planeGeometry").name("Plane Model")
+
+bgFolder.addColor(aestheticPresets,"backgroundColor").name('Background').onChange(color=>{
+    scene.background= new THREE.Color(color);
+})
+
+
+
+
+
+// const environmentObjects= BACKGROUND.createGrid()
+// environment.objects= environmentObjects
+
+const floor = BACKGROUND.addFloor(envSizes.length,envSizes.width,envSizes.height)
+// console.log(environmentObjects)
+scene.add(floor)
 
 
 
@@ -304,10 +249,12 @@ boids.addDebug(gui)
 
 //#region three.js essentials
 const hemiLight = new THREE.HemisphereLight( "#fdfdf4", "#515149", 3 );
+const sun= new THREE.DirectionalLight('#ffffff',3)
+const general= new THREE.AmbientLight('#ffffff',1)
 // hemiLight.color.setHSL( 57, 16, 92 );
 // hemiLight.groundColor.setHSL( 57, 21, 46 );
 // hemiLight.position.set( 0, 50, 0 );
-scene.add( hemiLight );
+scene.add( sun,general );
 
 
 

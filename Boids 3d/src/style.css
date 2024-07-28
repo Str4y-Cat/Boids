@@ -18,3 +18,78 @@ body
     left: 0;
     outline: none;
 }
+
+.buttonContainer{
+    padding: 3rem;
+    top:20%;
+    position: absolute;
+    z-index: 10;
+}
+
+.button{
+    padding:0.5rem;
+    border:0.5px solid black;
+    margin-top: 5px;
+}
+.button:hover{
+    
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+.buttonContainer ul{
+    list-style-type: none;
+
+}
+.buttonContainer:hover{
+    cursor: pointer;
+}
+
+.lil-gui { 
+    top:20%;
+    border-radius: 20px;
+	--background-color: #faf0dc;
+    --title-background-color: #faf0dc;
+    --title-text-color: #131312;
+    --hover-color: #cfcbc4;
+    --focus-color:#cfcbc4;
+    --widget-color: #aeadab;
+	--text-color:#131312;
+    --number-color: #042588;
+	--padding: 10px;
+    padding:5px;
+}
+
+.lil-gui .title{
+    
+    font-weight: bold;
+}
+
+.lil-gui button{
+    background-color: #678daf;
+}
+.lil-gui button:hover{
+    background-color: #95bde2;
+}
+
+
+.lil-gui button div{
+    color: #faf0dc;
+}
+
+.lil-gui.autoPlace{
+    top:10%;
+}
+
+.guiContainer
+{
+    position: fixed;
+    top: 10%;
+    height:fit;
+    width: fit;
+    right:5%;
+    /* border:1px solid black; */
+}
+#gui2
+{
+    margin-top: 5px;
+}

@@ -290,6 +290,7 @@ export default class Octree
      */
     #drawBox(node,scene,count)
     {
+        // console.log('drawing box',node)
         count=(count!=null)?count:1
         
         if(node.children==null)
@@ -366,10 +367,13 @@ export default class Octree
         
         if(node.children==null)
             {
-
-                scene.remove(node.boxHelper)
-                node.boxHelper.dispose()
-                node.boxHelper=null
+                if(node.boxHelper)
+                {
+                    scene.remove(node.boxHelper)
+                    node.boxHelper.dispose()
+                    node.boxHelper=null
+                }
+                
                 return 
             }
         
@@ -405,9 +409,10 @@ export default class Octree
 
     debug(gui,scene)
     {
-        const folder= gui.addFolder('Enviroment Optimizations')
+        const folder= gui.addFolder().title('Enviroment Optimizations')
         const debug={}
         debug.showOctree=false
+        console.log(this)
 
         folder.add(debug,'showOctree').name('View Octree Structure').onChange(bool=>{
             if(bool)
@@ -423,6 +428,7 @@ export default class Octree
         
         })
     }
+    
 
     
 
