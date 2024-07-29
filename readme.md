@@ -35,15 +35,31 @@ three-boids-js is a JavaScript library designed to help developers easily create
     
 
 ## Controls
-- **Cohesion Strength:** Adjust how strongly boids are attracted to the center of the flock.
-- **Alignment Strength:** Control how much boids try to match the velocity of nearby flockmates.
-- **Separation Distance:** Set the distance at which boids maintain separation from each other.
-- **Turn Factor:** Determine how aggressively boids try to stay within view.
+*General Controls:*
+- **View FPS:** Toggles "Frames Per Second" display
+- **Pause Simulation:** Pauses Simulation
+
+*Boid Controls:*
+- **Show Bounding Box:** Toggles the confinment visualization
+- **Entity Count:** The Amount of boids currently on screen
+- **Object Avoid Factor:** The force at which boids avoid world objects
+- **Object Visual Range:** The distance at which boids see world objects
+- **Cohesion Factor:** Adjust how strongly boids are attracted to the center of the flock.
+- **Alignment Factor:** Control how much boids try to match the velocity of neighbor boids within their _visual range_
+- **Separation Factor:** The force at which boids avoid neighbor boids within their _protected range_
+- **Matching Factor:** The force at which boids align velociy with neighbor boids within their _visual range_
+- **Turn Factor:** The force at which boids turn around when out of bounds
 - **Min Speed:** Set the minimum speed of boids.
 - **Max Speed:** Set the maximum speed of boids.
 - **Visual Range:** Adjust the range in which boids detect and react to nearby flockmates.
 - **Protected Range:** Define the area in which boids are protected from external disturbances.
-- **Camera Views:** Toggle between different camera views to observe the flock's behavior from various perspectives.
+
+*Environment Vision Controls:*
+- **Show Rays:** Toggles display of ray targets. This represents the angle that the boid can see
+- **Ray Count:** How many rays the boid casts per environment check
+- **Ray Angle:** The angle at which the boid casts rays
+- **Ray Distance:** The distance at which a collision is counted
+
 
 ### Future Goals
 - I aim to optimize this algorithim so that it runs on the gpu, using glsl 
