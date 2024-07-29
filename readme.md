@@ -1,4 +1,4 @@
-# 3D Boids Simulation with JavaScript, Three.js, and WebGL
+# 3D Boids Simulation Tool using JavaScript, Three.js, and WebGL
 
 ![Boid Simulation](./static/img/Capture8.PNG)
 ## Description
