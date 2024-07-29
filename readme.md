@@ -1,5 +1,5 @@
 # 3D Boids Simulation with JavaScript, Three.js, and WebGL
-![Boid Simulation](./static/screenshots/Capture.PNG)
+![Boid Simulation](./static/screenshots/Capture.png)
 ## Description
 three-boids-js is a JavaScript library designed to help developers easily create and customize boid simulations directly in the browser. Inspired by Craig Reynolds' "Boids" algorithm, this tool provides a straightforward API to create, control, and visualize flocks of boids with minimal setup.
 
