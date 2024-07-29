@@ -1,22 +1,16 @@
 # 3D Boids Simulation with JavaScript, Three.js, and WebGL
 
 ## Description
-This project extends the classic Boids algorithm into a 3D environment using JavaScript, Three.js, and the power of WebGL rendering. It simulates the collective motion of autonomous agents (boids) in a three-dimensional space, mimicking the flocking behavior observed in nature.
+three-boids-js is a JavaScript library designed to help developers easily create and customize boid simulations directly in the browser. Inspired by Craig Reynolds' "Boids" algorithm, this tool provides a straightforward API to create, control, and visualize flocks of boids with minimal setup.
 
-### Future Goals
-- I aim to optimize this algorithim so that it runs on the gpu, using glsl 
-- I aim to use rays to allow the boids to "see" their environement [DONE]
-- i would like to add predetor/prey interactions
-
-### Features
-- Real-time simulation of flocking/schooling behavior in a 3D space.
-- Smooth and immersive rendering powered by Three.js and WebGL.
-
-### Current Behavior
-The boids are currently tweaked to mimic fish and other schooling animals.
-
-![Schooling behavior](./static/img/Capture6.PNG)
-![Bigger school](./static/img/Capture7.PNG)
+## Features
+- **Easy Setup:** Quickly initialize boid simulations with a simple configuration.
+- **Customizable Behavior:** Take controll over a variety parameters to tweak the boid behavior, update parameters in real time using the debug panel.
+-  **Performance Optimized:** Efficiently handles large numbers of boids with smooth animations.
+-  - _Instanced Meshes_ All boid meshes are dynamically instanced, resulting in only 1 draw call
+-  - _Octree and BVH Optimized raycasting_ Raycasting take advantage of special datastructures to effectively nullify cost
+- **Object Avoidance:** Easily add objects for boids to avoid. Uses Optimized raycasting algorithms with tweakable parameters
+- 
 
 
 
@@ -26,6 +20,16 @@ The boids are currently tweaked to mimic fish and other schooling animals.
 3. In the command line, run `npm run dev` to start the development server.
 4. Interact with the simulation using the provided controls:
     - Adjust cohesion strength, alignment (matching) strength, separation distance, turn factor, min and max speed, visual range, and protected range to customize the behavior of the flock.
+
+### Current Behavior
+The boids are currently tweaked to mimic fish and other schooling animals.
+
+![Schooling behavior](./static/img/Capture6.PNG)
+![Bigger school](./static/img/Capture7.PNG)
+
+
+
+
     
 
 ## Controls
@@ -46,6 +50,10 @@ The boids are currently tweaked to mimic fish and other schooling animals.
 - [Measurement of areas on a sphere using Fibonacci and latitude–longitude lattices](https://arxiv.org/pdf/0912.4540)
 - 
 
+### Future Goals
+- I aim to optimize this algorithim so that it runs on the gpu, using glsl 
+- I aim to use rays to allow the boids to "see" their environement [DONE]
+- i would like to add predetor/prey interactions
 
 
 # Progression
