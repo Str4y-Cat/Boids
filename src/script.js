@@ -215,7 +215,11 @@ aestheticPresets.randomObj=()=>{environmentObjects=addBackground(environmentObje
 aestheticPresets.gridObj=()=>{environmentObjects=addBackground(environmentObjects,BACKGROUND.createGrid)}
 aestheticPresets.wallObj=()=>{environmentObjects=addBackground(environmentObjects,BACKGROUND.createWall)}
 
-const testMesh= new THREE.Mesh(new THREE.SphereGeometry(0.1),new THREE.MeshBasicMaterial({color:'red'}))
+const testGeometry=new THREE.ConeGeometry(0.2,0.9,3)
+testGeometry.rotateX(-Math.PI * 0.5);
+const testMesh= new THREE.Mesh(testGeometry,new THREE.MeshLambertMaterial({color:"blue"}))
+
+
 const planeMaterial= new THREE.MeshLambertMaterial({color:'#efc46d',side:THREE.DoubleSide})
 
 aestheticPresets.nativeGeometry=()=>{boids.changeModelMesh(testMesh,2)}
