@@ -1,5 +1,5 @@
 # 3D Boids Simulation with JavaScript, Three.js, and WebGL
-<!-- ![Boid Simulation](./static/screenshots/Capture.png) -->
+
 ![Boid Simulation](./static/img/Capture8.PNG)
 ## Description
 three-boids-js is a JavaScript library designed to help developers easily create and customize boid simulations directly in the browser. Inspired by Craig Reynolds' "Boids" algorithm, this tool provides a straightforward API to create, control, and visualize flocks of boids with minimal setup.
@@ -22,14 +22,14 @@ three-boids-js is a JavaScript library designed to help developers easily create
 ## API Reference
 | Method | Description | Default |
 |----------|----------|----------|
-| initBoids(count) | Creates a new Boids instance, setting up the logic and setting the simulation running  | 200 |
-| setModelMesh(model,scale,defaultMaterial) | Create mesh for every boid and add to scene |  |
-| changeModelMesh(model,scale,defaultMaterial) | Changes the mesh for every boid | |
+| initBoids(_count_) | Creates a new Boids instance, setting up the logic and setting the simulation running  | 200 |
+| setModelMesh(_model,scale,defaultMaterial_) | Create mesh for every boid and add to scene |  |
+| changeModelMesh(_model,scale,defaultMaterial_) | Changes the mesh for every boid | |
 | initVision() | Creates a new raycasting instance | |
-| addEnvironmentObjects(enviromentObjects,needsUpdate) | Adds new objects for boids to see | needsUpdate=false |
-| update(elapsedTime,deltaTime) | Updates the Simulation | |
-| addDebug(gui) | Adds debug panel to the scene | |
-| resetDebug(gui) | Resets the debug panel | |
+| addEnvironmentObjects(_enviromentObjects,needsUpdate_) | Adds new objects for boids to see | needsUpdate=false |
+| update(_elapsedTime,deltaTime_) | Updates the Simulation | |
+| addDebug(_gui_) | Adds debug panel to the scene | |
+| resetDebug(_gui_) | Resets the debug panel | |
 
 
 
@@ -63,15 +63,14 @@ three-boids-js is a JavaScript library designed to help developers easily create
 
 
 ### Future Goals
-- I aim to optimize this algorithim so that it runs on the gpu, using glsl 
-- I aim to use rays to allow the boids to "see" their environement [DONE]
-- i would like to add predetor/prey interactions
+- Move the boid logic onto the gpu, using THREE.js/webGL GPGPU
+- Add support for attraction/repulsion objects
 
 
 
 ## Performance 
 This implementation of the boids algorithm runs on the cpu. As such it has a O(N<sup>2</sup>) time complexity. 
-FPS does take a hit once you pass 500 entities
+FPS does take a hit once you pass 500 entities. Onced moved onto the gpu, we should be able to handle orders of magnitude more
 
 
 ## References
