@@ -221,10 +221,10 @@ export default class BoidController
      * 
      * @param {[obj]} environmenObjects 
      */
-    update(environmenObjects,elapsedTime)
+    update(environmenObjects,deltaTime)
     {
         //update the logic
-        this.boidLogic.update(environmenObjects)
+        this.boidLogic.update(environmenObjects,deltaTime)
 
         if(this.dummy)
         {
@@ -408,12 +408,12 @@ export default class BoidController
         this.removeInstancedMesh()
         const count= this.getBoidArray().length
         
-
+        
         this.dummy.forEach((dummyMesh,i)=>
             {
                 const materialColor= dummyMesh.material.color
                 
-                this.boidInstancedMesh[i] = new THREE.InstancedMesh( dummyMesh.geometry, new THREE.MeshBasicMaterial( {
+                this.boidInstancedMesh[i] = new THREE.InstancedMesh( dummyMesh.geometry, new THREE.MeshLambertMaterial( {
                     color:new THREE.Color(materialColor)
                 } ), this.getBoidArray().length );
             }

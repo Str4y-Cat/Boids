@@ -89,7 +89,7 @@ export default class BoidLogic
      * 
      * @param {[obj]} environmentObjects - array of environment objects close to boids
      */
-    update(environmentObjects)
+    update(environmentObjects,deltaTime)
     {
         const PROTECTED_RANGE_SQUARED= this.protectedRange**2
         const VISUAL_RANGE_SQUARED = this.visualRange**2  
@@ -258,9 +258,9 @@ export default class BoidLogic
                 const currentPosition= boid.position.clone()
 
                 //update positions
-                boid.position.x+=boid.velocity.x
-                boid.position.y+=boid.velocity.y
-                boid.position.z+=boid.velocity.z
+                boid.position.x+=boid.velocity.x*deltaTime
+                boid.position.y+=boid.velocity.y*deltaTime
+                boid.position.z+=boid.velocity.z*deltaTime
 
                 //update rotation
                 const m4=new THREE.Matrix4();

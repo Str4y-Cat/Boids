@@ -106,8 +106,28 @@ scene.add(camera)
 /**
  * stats
  */
-let stats = new Stats();
-document.body.appendChild( stats.dom );
+const stats = new Stats();
+
+debug.showStats=false
+const addStats=()=>
+{
+    document.body.appendChild( stats.dom );
+}
+const removeStats=()=>
+    {
+        document.body.removeChild( stats.dom );
+    }
+
+gui.add(debug,'showStats').name('View FPS').onChange(bool=>{
+    if(bool)
+    {
+        addStats()
+    }
+    else
+    {
+        removeStats()
+    }
+})
 /**
  * mouse events
  */
@@ -282,13 +302,17 @@ renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 
 const clock= new THREE.Clock()
 let past=0
+
 let intersectingEvironmentObjects={}
 const tick =()=>
     {
 
         let elapsedTime= clock.getElapsedTime()
-        boids.update(elapsedTime)
+        let deltaTime= elapsedTime-past
+        past= elapsedTime
 
+        boids.update(elapsedTime,((deltaTime/0.16)*10))
+        // console.log((deltaTime/0.16)*10)
         // stats.update()
         controls.update()
         // controls.update(delta)
@@ -296,17 +320,10 @@ const tick =()=>
 
         //for expensive computations, offset slowtick so that heavy computations are spread
         stats.begin();
-        let slowTick= Math.round(elapsedTime*100)
-        if(slowTick!=past){
-            // perform.timer('check environment')
-            
-            // intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
-
-            // perform.timer('check environment')
-        }
+        
         stats.end();
 
-        past=slowTick
+        
 
         // perform.timer('boid Update',true)
         // boidController.update(intersectingEvironmentObjects)

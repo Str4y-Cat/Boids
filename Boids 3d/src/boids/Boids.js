@@ -88,7 +88,7 @@ export default class Boids
         return intersectingEvironmentObjects
     }
 
-    update(elapsedTime)
+    update(elapsedTime,deltaTime)
     {
         let intersectingEvironmentObjects={}
         
@@ -101,7 +101,7 @@ export default class Boids
                     intersectingEvironmentObjects=this.#slowUpdate(elapsedTime)
                 }
 
-            this.boidController.update(intersectingEvironmentObjects,elapsedTime)
+            this.boidController.update(intersectingEvironmentObjects,deltaTime)
             // console.log(elapsedTime)
         }
 
