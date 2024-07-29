@@ -25,12 +25,7 @@ export default class Boids
 
     initBoids(count)
     {
-        this.boidController= new BoidController(count,this.container,this.scene)
-    }
-
-    setStandardMesh(geometry,material)
-    {
-        this.boidController.setStandardMesh(geometry,material) 
+        this.boidController= new BoidController(count=200,this.container,this.scene)
     }
 
     setModelMesh(model,scale,defaultMaterial)
