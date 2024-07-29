@@ -35,11 +35,11 @@ three-boids-js is a JavaScript library designed to help developers easily create
     
 
 ## Controls
-*General Controls:*
+### General Controls:
 - **View FPS:** Toggles "Frames Per Second" display
 - **Pause Simulation:** Pauses Simulation
 
-*Boid Controls:*
+### Boid Controls:
 - **Show Bounding Box:** Toggles the confinment visualization
 - **Entity Count:** The Amount of boids currently on screen
 - **Object Avoid Factor:** The force at which boids avoid world objects
@@ -54,7 +54,7 @@ three-boids-js is a JavaScript library designed to help developers easily create
 - **Visual Range:** Adjust the range in which boids detect and react to nearby flockmates.
 - **Protected Range:** Define the area in which boids are protected from external disturbances.
 
-*Environment Vision Controls:*
+### Environment Vision Controls:
 - **Show Rays:** Toggles display of ray targets. This represents the angle that the boid can see
 - **Ray Count:** How many rays the boid casts per environment check
 - **Ray Angle:** The angle at which the boid casts rays
