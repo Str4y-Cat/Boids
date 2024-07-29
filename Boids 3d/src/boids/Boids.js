@@ -90,20 +90,24 @@ export default class Boids
 
     update(elapsedTime,deltaTime)
     {
-        let intersectingEvironmentObjects={}
-        
-        
+        if (!document.hidden) 
+            {
+                let intersectingEvironmentObjects={}
+            
+            
 
-        if(this.boidController && !this.debug.pause)
-        {
-            if(this.rayController)
+                if(this.boidController && !this.debug.pause)
                 {
-                    intersectingEvironmentObjects=this.#slowUpdate(elapsedTime)
-                }
+                    if(this.rayController)
+                        {
+                            intersectingEvironmentObjects=this.#slowUpdate(elapsedTime)
+                        }
 
-            this.boidController.update(intersectingEvironmentObjects,deltaTime)
-            // console.log(elapsedTime)
-        }
+                    this.boidController.update(intersectingEvironmentObjects,deltaTime)
+                    // console.log(elapsedTime)
+                }
+            }
+        
 
     }
 

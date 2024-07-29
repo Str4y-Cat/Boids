@@ -83,10 +83,10 @@ body
 .guiContainer
 {
     position: fixed;
-    top: 10%;
+    top: 5vw;
     height:fit;
     width: fit;
-    right:5%;
+    right:5vw;
     /* border:1px solid black; */
 }
 #gui2
