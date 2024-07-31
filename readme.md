@@ -1,8 +1,8 @@
-# 3D Boids Simulation Tool using JavaScript, Three.js, and WebGL
+# 3D Boids Simulation Tool
 
 ![Boid Simulation](./static/img/Capture8.PNG)
 ## Description
-three-boids-js is a JavaScript library designed to help developers easily create and customize boid simulations directly in the browser. Inspired by Craig Reynolds' "Boids" algorithm, this tool provides a straightforward API to create, control, and visualize flocks of boids with minimal setup.
+three-boids-js is a JavaScript library designed to help developers easily create and customize boid simulations directly in the browser. Inspired by Craig Reynolds' "Boids" algorithm, this tool aims to provide a straightforward API to create, control, and visualize flocks of boids with minimal setup.
 
 ## Features
 - **Easy Setup:** Quickly initialize boid simulations with a simple configuration.
@@ -62,7 +62,7 @@ three-boids-js is a JavaScript library designed to help developers easily create
 - **Ray Distance:** The distance at which a collision is counted
 
 
-### Future Goals
+## Future Goals
 - Move the boid logic onto the gpu, using THREE.js/webGL GPGPU
 - Add support for attraction/repulsion objects
 
