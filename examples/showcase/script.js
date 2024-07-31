@@ -3,9 +3,9 @@ import GUI from 'lil-gui'
 import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 import Stats from 'three/addons/libs/stats.module.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import * as BACKGROUND from './showCase scripts/background'
 
-import Boids from './boids/Boids';
+import * as BACKGROUND from './background'
+import Boids from '../../src/Boids';
 
 
 // Add the extension functions
