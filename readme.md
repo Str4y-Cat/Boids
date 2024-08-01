@@ -58,7 +58,6 @@ boids.update(elapsedTime,deltaTime)
 | Method | Description | Default |
 |----------|----------|----------|
 |<b> setParameters</b>({_parameters_})|Sets the start up boid parameters|`{visualRange:0.75046, protectedRange:0.38377, enviromentVision:0.5, objectAvoidFactor:1, cohesionFactor:0.00408, matchingFactor:0.06312, seperationFactor:0.19269, minSpeed:2.379, maxSpeed:5.206, turnFactor:0.201}`|
-
 | <b> initBoids</b>(_count_) | Creates a new Boids instance, setting up the logic and setting the simulation running  | `200` |
 | <b> initVision</b>() | Creates a new raycasting instance | |
 ### General
@@ -90,8 +89,8 @@ boids.update(elapsedTime,deltaTime)
 - **Pause Simulation:** Pauses Simulation
 
 ### Boid Controls:
-- **Show Bounding Box:** Toggles the confinment visualization
-- **Entity Count:** The Amount of boids currently on screen
+- **Show Bounding Box:** Shows/Hides the Bounding box
+- **Entity Count:** The amount of boids currently on screen
 - **Object Avoid Factor:** The force at which boids avoid world objects
 - **Object Visual Range:** The distance at which boids see world objects
 - **Cohesion Factor:** Adjust how strongly boids are attracted to the center of the flock.
