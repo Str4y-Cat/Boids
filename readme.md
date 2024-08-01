@@ -1,6 +1,6 @@
 # 3D Boids Simulation Tool
 
-![Boid Simulation](https://github.com/Str4y-Cat/three-boids-js/blob/main/examples/preview.PNG)
+![Boid Simulation](https://github.com/Str4y-Cat/three-boids-js/blob/main/examples/boidvideo.gif)
 ## Description
 three-boids-js is a JavaScript library that aims to provide a straightforward API to create, control, and visualize flocks of boids with minimal setup.
 
