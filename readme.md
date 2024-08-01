@@ -5,7 +5,7 @@
 
 ![Boid Simulation](https://github.com/Str4y-Cat/three-boids-js/blob/main/examples/boidvideo.gif)
 ## Description
-three-boids-js is a JavaScript library that aims to provide a straightforward API to create and control flocking/schooling entities(![boids](https://en.wikipedia.org/wiki/Boids)) with minimal setup.
+three-boids-js is a JavaScript library that aims to provide a straightforward API to create and control flocking/schooling entities([boids](https://en.wikipedia.org/wiki/Boids)) with minimal setup.
 
 ## Features
 - **Easy Setup:** Quickly initialize boid simulations with a simple configuration.
