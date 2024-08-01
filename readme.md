@@ -53,10 +53,11 @@ boids.update(elapsedTime,deltaTime)
 ```
 
 ## API Reference
+
+### Initialisation
 | Method | Description | Default |
 |----------|----------|----------|
-### Initialisation
-|<b> setParameters<b>({_parameters_})|Sets the start up boid parameters|
+|<b> setParameters</b>({_parameters_})|Sets the start up boid parameters|
         `{visualRange:0.75046,
         protectedRange:0.38377,
         enviromentVision:0.5,
@@ -68,20 +69,26 @@ boids.update(elapsedTime,deltaTime)
         maxSpeed:5.206,
         turnFactor:0.201}`|
 
-| <b> initBoids<b>(_count_) | Creates a new Boids instance, setting up the logic and setting the simulation running  | `200` |
-| <b> initVision<b>() | Creates a new raycasting instance | |
+| <b> initBoids</b>(_count_) | Creates a new Boids instance, setting up the logic and setting the simulation running  | `200` |
+| <b> initVision</b>() | Creates a new raycasting instance | |
 ### General
-| <b> setModelMesh<b>(_model,scale,customMaterial_) | Create mesh for every boid and add to scene. Add a custom material if you want a different material to the supplied mesh |  |
-| <b> changeModelMesh<b>(_model,scale,customMaterial_) | Changes the mesh for every boid. Add a custom material if you want a different material to the supplied mesh | |
-| <b> addBoid<b>(_count_)|Adds _count_ amount of boids to the simulation||
-|<b> removeBoid<b>(_count_)|Removes _count_ amount of boids to the simulation||
+| Method | Description | Default |
+|----------|----------|----------|
+| <b> setModelMesh</b>(_model,scale,customMaterial_) | Create mesh for every boid and add to scene. Add a custom material if you want a different material to the supplied mesh |  |
+| <b> changeModelMesh</b>(_model,scale,customMaterial_) | Changes the mesh for every boid. Add a custom material if you want a different material to the supplied mesh | |
+| <b> addBoid</b>(_count_)|Adds _count_ amount of boids to the simulation||
+|<b> removeBoid</b>(_count_)|Removes _count_ amount of boids to the simulation||
 | <b> addEnvironmentObjects<b>(_enviromentObjects,reset_) | Adds new objects for boids to see | `reset = false` |
 ### Each Frame
-| <b> update<b>(_elapsedTime,deltaTime_) | Updates the Simulation | |
+| Method | Description | Default |
+|----------|----------|----------|
+| <b> update</b>(_elapsedTime,deltaTime_) | Updates the Simulation | |
 
 ### Debug
-| <b> addDebug<b>(_gui_) | Adds debug panel to the scene | |
-| <b> resetDebug<b>(_gui_) | Resets the debug panel | |
+| Method | Description | Default |
+|----------|----------|----------|
+| <b> addDebug</b>(_gui_) | Adds debug panel to the scene | |
+| <b> resetDebug</b>(_gui_) | Resets the debug panel | |
 
 
 
