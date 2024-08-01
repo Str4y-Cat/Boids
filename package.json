@@ -12,6 +12,9 @@
       "require":"./src/dist/three-boids.umd.cjs"
     }
   },
+  "files": [
+    "./src/dist"
+  ],
   
   "scripts": {
     "dev": "vite",
