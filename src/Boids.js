@@ -19,18 +19,45 @@ export default class Boids
         this.environmentObjects=[]
 
         this.past=0
-        // this.debug
+        this.debug={}
         // this.pauseSimulation
     }
 
     initBoids(count)
     {
-        this.boidController= new BoidController(count=200,this.container,this.scene)
+        this.boidController= new BoidController(count,this.container,this.scene)
+    }
+    setParams(params)
+    {
+        for(const key in params)
+        {
+            
+            if(boidConfig.values[key])
+            {
+                boidConfig.values[key]= params[key]
+            }
+
+        }
+        // params.forEach(param=>
+        // {
+        //     // if(boidConfig.values[param])
+        // }
+        // )
+        
+    }
+
+    addBoids(count)
+    {
+        this.boidController.addBoids(count)
+    }
+
+    removeBoids(count)
+    {
+        this.boidController.removeBoids(count)
     }
 
     setModelMesh(model,scale,defaultMaterial)
     {
-        // this.boidController.setModelMesh(model)
         this.boidController.setModels(model,scale,defaultMaterial)
     }
 
@@ -98,7 +125,7 @@ export default class Boids
                             intersectingEvironmentObjects=this.#slowUpdate(elapsedTime)
                         }
 
-                    this.boidController.update(intersectingEvironmentObjects,deltaTime)
+                    this.boidController.update(intersectingEvironmentObjects,(deltaTime/0.16666)*10)
                     // console.log(elapsedTime)
                 }
             }
