@@ -2,7 +2,7 @@
 
 export default {
     // root: 'src/',
-    // publicDir: '../static/',
+    publicDir: './static/',
     // base: './',
     server:
     {
