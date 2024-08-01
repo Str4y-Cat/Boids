@@ -138,6 +138,6 @@ FPS does take a hit once you pass 500 entities. Onced moved onto the gpu, we sho
 [npm-downloads-url]: https://www.npmtrends.com/3d-force-graph -->
 
 
-[deepscan]: (https://deepscan.io/api/teams/24470/projects/27658/branches/887097/badge/grade.svg)
+[deepscan]: https://deepscan.io/api/teams/24470/projects/27658/branches/887097/badge/grade.svg
 [deepscan-url]: https://deepscan.io/dashboard#view=project&tid=24470&pid=27658&bid=887097
 <!-- [![DeepScan grade](https://deepscan.io/api/teams/24470/projects/27658/branches/887097/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=24470&pid=27658&bid=887097) -->
