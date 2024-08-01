@@ -114,19 +114,21 @@ export default class Boids
         })
         if(reset)
         {
-            console.log('removeing')
             this.environmentObjects=[]
-        }
-
-        this.environmentObjects.push(...enviromentObjects)
-        // console.log(enviromentObjects)
-        if(this.environmentObjects)
-        {
             this.environmentOctree.hideOctree(this.scene)
 
         }
+
+        this.environmentObjects.push(...enviromentObjects)
+        
+
+        // if(this.environmentObjects.length>0)
+        // {
+        //     this.environmentOctree.hideOctree(this.scene)
+        // }
+
         this.environmentOctree = new Octree(this.environmentObjects,boidConfig.vision.far)
-        // console.log(this.environmentOctree)
+        
         this.rayController.environmentOctree=this.environmentOctree 
     }
 

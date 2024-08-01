@@ -167,7 +167,7 @@ export default class BoidController
         
 
         this.modelScale=minScale
-        const glb=model
+        // const glb=model
         // console.log('glb',glb)
         this.createDummyMesh(model)
 
@@ -262,7 +262,7 @@ export default class BoidController
     changeModelCount()
     {
         this.removeInstancedMesh()
-        const count= this.getBoidArray().length
+        
         
         
         this.dummy.forEach((dummyMesh,i)=>

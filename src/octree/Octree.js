@@ -79,7 +79,7 @@ export default class Octree
     getObjects(obj,scene)
     {
         let box =obj;
-        if(!obj.isBox3||obj.isBox3==null){
+        if(obj.isBox3==null||obj.isBox3==false){
              box= new THREE.Box3().setFromObject(obj)
         }
         // console.log(box)
@@ -150,7 +150,7 @@ export default class Octree
                         //recursivly checks children that fit criteria:
                         // - child bounds must intersect with the box
                         // - node must contain an object
-                        if(node.childBounds[i].intersectsSphere(sphere)&&node.containsObject)
+                        if(node.childBounds[i].intersectsSphere(sphere))
                             {
                                 //recurisve call
                                 const value= this.intersectsObject(node.children[i],sphere)
@@ -214,7 +214,7 @@ export default class Octree
                         //recursivly checks children that fit criteria:
                         // - child bounds must intersect with the box
                         // - node must contain an object
-                        if(node.childBounds[i].intersectsBox(box)&&node.containsObject)
+                        if(node.childBounds[i].intersectsBox(box))
                             {
                                 //recurisve call
                                 const value= this.intersectsLayers(node.children[i],box,scene)
@@ -266,7 +266,7 @@ export default class Octree
                         //recursivly checks children that fit criteria:
                         // - child bounds must intersect with the box
                         // - node must contain an object
-                        if(node.childBounds[i].intersectsBox(box)&&node.containsObject)
+                        if(node.childBounds[i].intersectsBox(box))
                             {
                                 //recurisve call
                                const holder = this.isIntersecting(node.children[i],box,scene)
@@ -303,7 +303,7 @@ export default class Octree
                 scale.multiplyScalar(0.999)
                 const box=new THREE.Box3().setFromCenterAndSize(center,scale)
 
-                let color="white"
+                let color
                 // console.log(`count:${count}`)
                 switch(count)
                 {
