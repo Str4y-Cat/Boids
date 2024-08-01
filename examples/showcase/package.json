@@ -14,7 +14,7 @@
   "dependencies": {
     "lil-gui": "^0.19.2",
     "three": "^0.165.0",
-    "three-boids": "^0.0.3",
+    "three-boids": "^0.0.5",
     "three-mesh-bvh": "^0.7.5"
   }
 }

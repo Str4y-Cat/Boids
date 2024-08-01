@@ -1,7 +1,6 @@
 import BoidLogic from "./BoidLogic";
 import boidConfig from "../boid.config";
 import * as THREE from 'three'
-import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 export default class BoidController
 {
@@ -89,16 +88,13 @@ export default class BoidController
         if(this.dummy)
         {
             for ( let i = 0; i< this.getBoidArray().length; i++ ) {
-                // let dummy= new THREE.Object3D()
                 const boid=this.getBoidArray()[i]
-                // const target=new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ)
+
     
                 for(let n=0; n<this.dummy.length; n++)
                     {
-                        // this.dummy[n].position.x=boid.x
                         this.dummy[n].position.copy(boid.position)
-                        // this.dummy[n].position.y=boid.y
-                        // this.dummy[n].position.z=boid.z
+
     
                         this.dummy[n].quaternion.setFromRotationMatrix(boid.rotationMatrix)
                         this.dummy[n].updateMatrix();
@@ -436,7 +432,8 @@ export default class BoidController
             const material= new THREE.MeshBasicMaterial({
                 color:'red',
                 opacity:0.5,
-                transparent:true
+                transparent:true,
+                depthWrite:false
             })
             const geometry= new THREE.SphereGeometry()
 
@@ -472,6 +469,7 @@ export default class BoidController
                 color:'#5bff33',
                 opacity:0.5,
                 transparent:true,
+                depthWrite:false
             })
             const geometry= new THREE.SphereGeometry()
 
@@ -523,7 +521,7 @@ export default class BoidController
     
         this.debug.folder.add(boidConfig.values,"protectedRange").name("Protected range").min(0.1).max(2).step(0.00001).onChange((num)=>{
             this.boidLogic.protectedRange=num
-            if(this.debug.protectedRange)
+            if(this.debug.protectedRange&&this.debug.showProtectedRange)
             {
                 this.#debugProtectedRange(true)
             }
@@ -546,7 +544,7 @@ export default class BoidController
         
         this.debug.folder.add(boidConfig.values,"visualRange").name("Visual range").min(0.5).max(3).step(0.00001).onChange((num)=>{
             this.boidLogic.visualRange=num
-            if(this.debug.visualRange)
+            if(this.debug.visualRange && this.debug.showVisualRange)
                 {
                     this.#debugVisualRange(true)
                 }
