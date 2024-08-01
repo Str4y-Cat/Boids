@@ -1,8 +1,8 @@
 # 3D Boids Simulation Tool
 
-![Boid Simulation](./static/img/Capture8.PNG)
+![Boid Simulation](https://github.com/Str4y-Cat/three-boids-js/blob/main/examples/preview.PNG)
 ## Description
-three-boids-js is a JavaScript library designed to help developers easily create and customize boid simulations directly in the browser. Inspired by Craig Reynolds' "Boids" algorithm, this tool aims to provide a straightforward API to create, control, and visualize flocks of boids with minimal setup.
+three-boids-js is a JavaScript library that aims to provide a straightforward API to create, control, and visualize flocks of boids with minimal setup.
 
 ## Features
 - **Easy Setup:** Quickly initialize boid simulations with a simple configuration.
@@ -57,17 +57,7 @@ boids.update(elapsedTime,deltaTime)
 ### Initialisation
 | Method | Description | Default |
 |----------|----------|----------|
-|<b> setParameters</b>({_parameters_})|Sets the start up boid parameters|
-        `{visualRange:0.75046,
-        protectedRange:0.38377,
-        enviromentVision:0.5,
-        objectAvoidFactor:1,
-        cohesionFactor:0.00408,
-        matchingFactor:0.06312,
-        seperationFactor:0.19269,
-        minSpeed:2.379,
-        maxSpeed:5.206,
-        turnFactor:0.201}`|
+|<b> setParameters</b>({_parameters_})|Sets the start up boid parameters|`{visualRange:0.75046, protectedRange:0.38377, enviromentVision:0.5, objectAvoidFactor:1, cohesionFactor:0.00408, matchingFactor:0.06312, seperationFactor:0.19269, minSpeed:2.379, maxSpeed:5.206, turnFactor:0.201}`|
 
 | <b> initBoids</b>(_count_) | Creates a new Boids instance, setting up the logic and setting the simulation running  | `200` |
 | <b> initVision</b>() | Creates a new raycasting instance | |
