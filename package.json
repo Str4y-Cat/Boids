@@ -1,6 +1,6 @@
 {
   "name": "three-boids",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Javascript Boid Simulation library",
   "type": "module",
   "main": "./dist/three-boids.umd.cjs",
