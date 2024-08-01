@@ -22,9 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-/TEST
-
-progress
-references.txt
-reference.js
-testing

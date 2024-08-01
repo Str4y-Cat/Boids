@@ -12,24 +12,76 @@ three-boids-js is a JavaScript library designed to help developers easily create
 -  - _Octree and BVH Optimized raycasting_ takes advantage of special datastructures to effectively nullify cost
 - **Object Avoidance:** Easily add objects for boids to avoid. Uses Optimized raycasting algorithms with tweakable parameters
 
+## Quick Start
+
+Install three-boids npm package:
+```js
+npm i three-boids
+```
+
+then 
+
+```js
+import BOIDS from 'three-boids'
+```
+
+Create a standard three.js project, then 
+
+```js
+//create a boundning box and new boids instance
+const box = new THREE.Box3(new THREE.Vector3(0,0,0),new THREE.Vector3(5,5,5)).setFromCenterAndSize()
+const boids = new BOIDS(scene,box)
+
+//initiate the boid simulation
+boids.initBoids(200)
+
+//add a mesh for the boids
+const geometry=new THREE.ConeGeometry(0.2,0.9,3)
+geometry.rotateX(-Math.PI * 0.5);
+const mesh= new THREE.Mesh(testGeometry,new THREE.MeshBasicMaterial({color:"blue"}))
+boids.setModelMesh(mesh,2)
+
+//initiate the boids vision and add objects to avoid
+boids.initVision()
+const environmentObject= new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshBasicMaterial())
+boids.addEnvironmentObjects([environmentObject],true)
+
+//within your tick function, update the simulation
+boids.update(elapsedTime,deltaTime)
 
 
-## Instructions
-1. Clone or download the repository to your local machine.
-2. Run `npm install` to install dependencies.
-3. In the command line, run `npm run dev` to start the development server.
+```
 
 ## API Reference
 | Method | Description | Default |
 |----------|----------|----------|
-| initBoids(_count_) | Creates a new Boids instance, setting up the logic and setting the simulation running  | 200 |
-| setModelMesh(_model,scale,defaultMaterial_) | Create mesh for every boid and add to scene |  |
-| changeModelMesh(_model,scale,defaultMaterial_) | Changes the mesh for every boid | |
-| initVision() | Creates a new raycasting instance | |
-| addEnvironmentObjects(_enviromentObjects,needsUpdate_) | Adds new objects for boids to see | needsUpdate=false |
-| update(_elapsedTime,deltaTime_) | Updates the Simulation | |
-| addDebug(_gui_) | Adds debug panel to the scene | |
-| resetDebug(_gui_) | Resets the debug panel | |
+### Initialisation
+|<b> setParameters<b>({_parameters_})|Sets the start up boid parameters|
+        `{visualRange:0.75046,
+        protectedRange:0.38377,
+        enviromentVision:0.5,
+        objectAvoidFactor:1,
+        cohesionFactor:0.00408,
+        matchingFactor:0.06312,
+        seperationFactor:0.19269,
+        minSpeed:2.379,
+        maxSpeed:5.206,
+        turnFactor:0.201}`|
+
+| <b> initBoids<b>(_count_) | Creates a new Boids instance, setting up the logic and setting the simulation running  | `200` |
+| <b> initVision<b>() | Creates a new raycasting instance | |
+### General
+| <b> setModelMesh<b>(_model,scale,customMaterial_) | Create mesh for every boid and add to scene. Add a custom material if you want a different material to the supplied mesh |  |
+| <b> changeModelMesh<b>(_model,scale,customMaterial_) | Changes the mesh for every boid. Add a custom material if you want a different material to the supplied mesh | |
+| <b> addBoid<b>(_count_)|Adds _count_ amount of boids to the simulation||
+|<b> removeBoid<b>(_count_)|Removes _count_ amount of boids to the simulation||
+| <b> addEnvironmentObjects<b>(_enviromentObjects,reset_) | Adds new objects for boids to see | `reset = false` |
+### Each Frame
+| <b> update<b>(_elapsedTime,deltaTime_) | Updates the Simulation | |
+
+### Debug
+| <b> addDebug<b>(_gui_) | Adds debug panel to the scene | |
+| <b> resetDebug<b>(_gui_) | Resets the debug panel | |
 
 
 
