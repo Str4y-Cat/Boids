@@ -3,8 +3,6 @@
   "version": "0.0.0",
   "description": "An implementation of the classic boid algorithim in 3d",
   "type": "module",
-
-  
   "scripts": {
     "dev": "vite",
     "build": "vite build"
@@ -16,6 +14,7 @@
   "dependencies": {
     "lil-gui": "^0.19.2",
     "three": "^0.165.0",
+    "three-boids": "^0.0.3",
     "three-mesh-bvh": "^0.7.5"
   }
 }
