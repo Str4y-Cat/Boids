@@ -3,16 +3,17 @@
   "version": "0.0.2",
   "description": "three-boids is a JavaScript library designed to help developers easily create and customize boid simulations directly in the browser. Inspired by Craig Reynolds' \"Boids\" algorithm, this tool aims to provide a straightforward API to create, control, and visualize flocks of boids with minimal setup.",
   "type": "module",
-  "main": "./src/dist/three-boids.umd.cjs",
-  "module": "./src/dist/three-boids.js",
+  "main": "./dist/three-boids.umd.cjs",
+  "module": "./dist/three-boids.js",
   "exports": {
     ".": {
-      "import": "./src/dist/three-boids.js",
-      "require": "./src/dist/three-boids.umd.cjs"
+      "import": "./dist/three-boids.js",
+      "require": "./dist/three-boids.umd.cjs"
     }
   },
   "files": [
-    "./src/dist"
+    "./src",
+    "./dist"
   ],
   "scripts": {
     "dev": "vite",
