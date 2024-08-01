@@ -23,10 +23,20 @@ export default class Boids
         // this.pauseSimulation
     }
 
-    initBoids(count)
+    /**
+     * Start the boid simulation
+     * @param {int} boidCount 
+     */
+    initBoids(boidCount)
     {
-        this.boidController= new BoidController(count,this.container,this.scene)
+        this.boidController= new BoidController(boidCount,this.container,this.scene)
     }
+
+    /**
+     * Sets the start up parameters. Call this method before initBoids()
+     * 
+     * @param {Object} params 
+     */
     setParams(params)
     {
         for(const key in params)
@@ -46,39 +56,68 @@ export default class Boids
         
     }
 
+    /**
+     * @param {int} count 
+     */
     addBoids(count)
     {
         this.boidController.addBoids(count)
     }
 
+    /**
+     * 
+     * @param {*} count 
+     */
     removeBoids(count)
     {
         this.boidController.removeBoids(count)
     }
 
-    setModelMesh(model,scale,defaultMaterial)
+    /**
+     * Set up the boid meshes
+     * 
+     * @param {THREE.Object3D} model 
+     * @param {int} scale 
+     * @param {THREE.Material} customMaterial defaults to the model material if left blank
+     */
+    setModelMesh(model,scale,customMaterial)
     {
-        this.boidController.setModels(model,scale,defaultMaterial)
+        this.boidController.setModels(model,scale,customMaterial)
     }
 
-    changeModelMesh(model,scale,defaultMaterial)
+    /**
+     * 
+     * @param {THREE.Object3D} model 
+     * @param {int} scale 
+     * @param {THREE.Material} customMaterial defaults to the model material if left blank
+     */
+    changeModelMesh(model,scale,customMaterial)
     {
-        this.boidController.changeModelMesh(model,scale,defaultMaterial)
+        this.boidController.changeModelMesh(model,scale,customMaterial)
     }
 
+    /**
+     * Allows boids to be aware of their enviroment
+     */
     initVision()
     {
         this.environmentOctree = new Octree(this.environmentObjects,boidConfig.vision.far) 
         this.rayController =new RayController(this.environmentOctree)
     }
    
-    addEnvironmentObjects(enviromentObjects,needsUpdate)
+    /**
+     * Adds new objects for boids to see
+     * 
+     * @param {[THREE.Object3D]} enviromentObjects 
+     * @param {bool} reset clears past environment objects
+     */
+    addEnvironmentObjects(enviromentObjects,reset)
     {
         enviromentObjects.forEach(obj=>{
             obj.geometry.computeBoundingBox();
             obj.geometry.computeBoundsTree();
         })
-        if(needsUpdate)
+        if(reset)
         {
             console.log('removeing')
             this.environmentObjects=[]
@@ -96,6 +135,11 @@ export default class Boids
         this.rayController.environmentOctree=this.environmentOctree 
     }
 
+    /**
+     * Slower update cycle for cpu intensive tasks
+     * @param {Number} elapsedTime 
+     * @returns 
+     */
     #slowUpdate(elapsedTime)
     {
         let intersectingEvironmentObjects={}
@@ -110,6 +154,12 @@ export default class Boids
         return intersectingEvironmentObjects
     }
 
+    /**
+     * Steps the boid simulation forward in time
+     * 
+     * @param {Number} elapsedTime 
+     * @param {Number} deltaTime 
+     */
     update(elapsedTime,deltaTime)
     {
         if (!document.hidden) 
@@ -133,6 +183,10 @@ export default class Boids
 
     }
 
+    /**
+     * Adds a debug panel to the scene. uses Lil-gui
+     * @param {} gui 
+     */
     addDebug(gui)
     {
         this.debug={pause:false}
@@ -155,11 +209,6 @@ export default class Boids
             }
 
         })
-        
-       
-
-        // this.environmentOctree.resetDebug(gui)
-        // this.addDebug(gui)
 
     }
 
