@@ -87,7 +87,7 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     let deltaTime= elapsedTime-past
         past= elapsedTime
-    boids.update(elapsedTime,((deltaTime/0.16)*10))
+    boids.update(elapsedTime,(deltaTime))
 
     // Update controls
     controls.update()
