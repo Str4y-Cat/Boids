@@ -1,4 +1,13 @@
 # 3D Boids Simulation Tool
+[![NPM Package][npm]][npm-url]
+
+[![Build Size][build-size]][build-size-url]
+
+[![NPM Downloads][npm-downloads]][npmtrends-url]
+
+[![DeepScan][deepscan]][deepscan-url]
+
+<!-- [![Discord][discord]][discord-url] -->
 
 ![Boid Simulation](https://github.com/Str4y-Cat/three-boids-js/blob/main/examples/boidvideo.gif)
 ## Description
