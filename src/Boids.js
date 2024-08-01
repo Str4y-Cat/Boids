@@ -48,11 +48,6 @@ export default class Boids
             }
 
         }
-        // params.forEach(param=>
-        // {
-        //     // if(boidConfig.values[param])
-        // }
-        // )
         
     }
 
