@@ -1,6 +1,5 @@
 # 3D Boids Simulation Tool
 [![NPM Package][npm-img]][npm-url]
-
 [![DeepScan][deepscan]][deepscan-url]
 
 
