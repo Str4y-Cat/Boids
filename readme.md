@@ -1,17 +1,12 @@
 # 3D Boids Simulation Tool
-[![NPM Package][npm]][npm-url]
-
-[![Build Size][build-size]][build-size-url]
-
-[![NPM Downloads][npm-downloads]][npmtrends-url]
+[![NPM Package][npm-img]][npm-url]
 
 [![DeepScan][deepscan]][deepscan-url]
 
-<!-- [![Discord][discord]][discord-url] -->
 
 ![Boid Simulation](https://github.com/Str4y-Cat/three-boids-js/blob/main/examples/boidvideo.gif)
 ## Description
-three-boids-js is a JavaScript library that aims to provide a straightforward API to create, control, and visualize flocks of boids with minimal setup.
+three-boids-js is a JavaScript library that aims to provide a straightforward API to create and control flocking/schooling entities(![boids](https://en.wikipedia.org/wiki/Boids)) with minimal setup.
 
 ## Features
 - **Easy Setup:** Quickly initialize boid simulations with a simple configuration.
@@ -135,3 +130,14 @@ FPS does take a hit once you pass 500 entities. Onced moved onto the gpu, we sho
 - [Original Paper by C.W.Reynolds](https://www.cs.toronto.edu/~dt/siggraph97-course/cwr87/)
 - [distributing n points on a sphere](https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere)
 - [Measurement of areas on a sphere using Fibonacci and latitude–longitude lattices](https://arxiv.org/pdf/0912.4540)
+
+
+[npm-img]: https://img.shields.io/npm/v/three-boids
+[npm-url]: https://npmjs.org/package/three-boids
+<!-- [npm-downloads-img]: https://img.shields.io/npm/dt/3d-force-graph
+[npm-downloads-url]: https://www.npmtrends.com/3d-force-graph -->
+
+
+[deepscan]: (https://deepscan.io/api/teams/24470/projects/27658/branches/887097/badge/grade.svg)
+[deepscan-url]: https://deepscan.io/dashboard#view=project&tid=24470&pid=27658&bid=887097
+<!-- [![DeepScan grade](https://deepscan.io/api/teams/24470/projects/27658/branches/887097/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=24470&pid=27658&bid=887097) -->
