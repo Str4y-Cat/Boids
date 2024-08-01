@@ -13,20 +13,15 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, box3, scene)
+    constructor(count=200, box3, scene)
     {
         
         this.scene=scene
 
-
-        // this.boundingBox= new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,0,0),new THREE.Vector3(size,size,size))
         this.boundingBox= box3
         this.boidMeshes= []
         this.boidCount=null
 
-        // [ ] convert to boundning sphere
-       
-        
         this.#setBoidLogic(count)
 
         
@@ -56,161 +51,26 @@ export default class BoidController
     }
 
     /**
-     * Sets a native geometry mesh for each boid
-     * 
-     * @param {*} geometry - THREE.js geometry
-     * @param {*} material - THREE.js material
-     * @param {bool} rotateX 
-     */
-    setStandardMesh(geometry,material,rotateX=true)
-    {
-        //set global geometry
-        this.material= material
-        //set global material
-        this.geometry= geometry
-
-        if(rotateX){
-            geometry.rotateX(-Math.PI * 0.5);
-        }
-
-        //#addMeshes()
-        this.#addMeshes(this.boidLogic.boidArray)
-    }
-
-    /**
-     * Sets a native geometry mesh for each boid
-     * 
-     * @param {*} geometry - THREE.js geometry
-     * @param {*} material - THREE.js material
-     * @param {bool} rotateX 
-     */
-    setModelMesh(model,rotateX=true)
-    {
-        // //set global geometry
-        // this.material= material
-        // //set global material
-        // this.geometry= geometry
-
-        // if(rotateX){
-        //     geometry.rotateX(-Math.PI * 0.5);
-        // }
-
-        this.model= model.scene
-        this.model.scale.set(0.1, 0.1, 0.1);
-
-        //#addMeshes()
-        this.#addMeshes(this.boidLogic.boidArray)
-    }
-
-    /**
-     * Adds all positions in array to mesh array and add to scene
-     * 
-     * @param {*} boidLogicArray 
-     * @returns 
-     */
-    #addMeshes(boidLogicArray)
-    {
-
-        //check if mat and geo has been set
-        // if(!this.material)
-        // {
-        //     console.log('No material has been set')
-        //     return
-        // }
-        // if(!this.geometry)
-        // {
-        //     console.log('No geometry has been set')
-        //     return
-        // }
-        
-       //create mesh for each boid position
-        // boidLogicArray.forEach((boid) => {
-        //     this.#createMesh(boid)
-        // });
-
-        // //update boidcount
-        // this.boidCount=this.boidMeshes.length
-        
-        
-        
- 
-    }
-
-    
-
-    /**
-     * creates the three.js mesh for boidLogic object
-     * 
-     * @param {object} boidPosition 
-     */
-    #createMesh({x,y,z})
-    {
-        let boidMesh
-        //create mesh
-        if(this.model)
-        {
-            boidMesh=SkeletonUtils.clone(this.model)
-        }
-        else{
-            boidMesh= new THREE.Mesh(this.geometry,this.material)
-        }
-        
-        //set position of mesh
-        boidMesh.position.set(x,y,z)
-
-        //add to scene
-        this.scene.add(boidMesh)
-
-        //push to array of boid meshes
-        this.boidMeshes.push(boidMesh)
-    }
-
-    /**
-     * removes last mesh in boidmesh array
-     */
-    #removeMesh()
-    {
-        //remove last mesh from array
-        const mesh= this.boidMeshes.pop()
-
-        //remove from scene and free up memory
-        this.scene.remove(mesh)
-        mesh.geometry.dispose()
-        mesh.material.dispose()     
-    }
-
-    /**
      * 
      * @param {int} count 
      */
-    #addBoids(count)
+    addBoids(count)
     {
         //add new boids to boidLogic instance
         this.boidLogic.addBoids(count)
-        
+        this.changeModelCount(this.getBoidArray().length)
     }
 
     /**
      * 
      * @param {int} count 
      */
-    #removeBoids(count)
+    removeBoids(count)
     {
         //remove boids from boid logic instance
         this.boidLogic.removeBoids(count)
-        console.log(this.getBoidArray().length)
-        //instanciate start and end indicies
-        // const iStart=this.boidLogic.boidArray.length
-        // const iEnd= this.boidLogic.boidArray.length+count
+        this.changeModelCount(this.getBoidArray().length)
 
-        // //remove meshes
-        // for(let i=iStart; i<iEnd;i++){
-        //     this.#removeMesh()
-        // }
-        // console.log(`After pos: ${this.boidLogic.boidArray.length}\nAfter mesh: ${this.boidMeshes.length}`)
-
-
-        // this.boidLogic.needsUpdate=true
 
     }
     //#endregion
@@ -291,22 +151,19 @@ export default class BoidController
         this.dummy.push(...baseMesh.children);
         return 
     }
+
     getBaseMesh(mesh,parent)
     {
         // console.log(mesh)
 
         if(mesh.children.length<1)
         {
-            
             return parent
         }
         parent= mesh
 
         return this.getBaseMesh(mesh.children[0],parent)
     }
-    //createLocalBoundingBox
-    //createInstancedMesh
-
 
     setModels(model,minScale,defaultMaterial)
     {
@@ -340,13 +197,15 @@ export default class BoidController
 
         this.dummy.forEach((dummyMesh,i)=>
         {
-            const materialColor= dummyMesh.material.color
-            let material=new THREE.MeshLambertMaterial( {color:new THREE.Color(materialColor)} )
+            // const materialColor= dummyMesh.material.color
+            let material= dummyMesh.material
+            // new THREE.MeshLambertMaterial( {color:new THREE.Color(materialColor)} )
 
             if(defaultMaterial)
             {
                 material=defaultMaterial
             }
+            
             
             this.boidInstancedMesh[i] = new THREE.InstancedMesh( dummyMesh.geometry, material, this.getBoidArray().length );
         }
@@ -403,6 +262,7 @@ export default class BoidController
             obj.material.dispose()
         })
     }
+
     changeModelCount()
     {
         this.removeInstancedMesh()
@@ -457,7 +317,7 @@ export default class BoidController
 
         this.setModels(newModel,minScale,defaultMaterial)
     }
-    
+
 
     
     //#endregion
@@ -500,13 +360,12 @@ export default class BoidController
             
             if(count>this.getBoidArray().length)
                 {
-                    this.#addBoids(count-this.getBoidArray().length)
-                    this.changeModelCount(count)
+                    this.addBoids(count-this.getBoidArray().length)
+                    
                 }
             if(count<this.getBoidArray().length)
                 {
-                    this.#removeBoids(this.getBoidArray().length-count)
-                    this.changeModelCount(count)
+                    this.removeBoids(this.getBoidArray().length-count)
 
                 }
         })
