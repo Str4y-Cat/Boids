@@ -70,6 +70,7 @@ boids.update(elapsedTime,deltaTime)
 | <b> changeModelMesh</b>(_model,scale,customMaterial_) | Changes the mesh for every boid. Add a custom material if you want a different material to the supplied mesh | |
 | <b> addBoid</b>(_count_)|Adds _count_ amount of boids to the simulation||
 |<b> removeBoid</b>(_count_)|Removes _count_ amount of boids to the simulation||
+|<b> getBoidArray</b>()|Exposes an array containing boid positions and directions||
 | <b> addEnvironmentObjects<b>(_enviromentObjects,reset_) | Adds new objects for boids to see | `reset = false` |
 ### Each Frame
 | Method | Description | Default |
