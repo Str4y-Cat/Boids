@@ -267,11 +267,10 @@ export default class BoidController
         
         this.dummy.forEach((dummyMesh,i)=>
             {
-                const materialColor= dummyMesh.material.color
-                
-                this.boidInstancedMesh[i] = new THREE.InstancedMesh( dummyMesh.geometry, new THREE.MeshLambertMaterial( {
-                    color:new THREE.Color(materialColor)
-                } ), this.getBoidArray().length );
+
+                let material= dummyMesh.material
+
+                this.boidInstancedMesh[i] = new THREE.InstancedMesh( dummyMesh.geometry, material, this.getBoidArray().length );
             }
             )
             
