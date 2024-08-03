@@ -15,7 +15,7 @@ export default class Boids
         THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
         THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
         THREE.Mesh.prototype.raycast = acceleratedRaycast;
-        
+
         this.scene=scene
         this.container=container
         this.environmentObjects=[]
@@ -69,6 +69,17 @@ export default class Boids
     {
         this.boidController.removeBoids(count)
     }
+
+    /**
+     * 
+     * @returns array of current boid positions
+     */
+    getBoidArray()
+    {
+        return this.boidController.getBoidArray()
+    }
+
+    
 
     /**
      * Set up the boid meshes
