@@ -32,7 +32,7 @@ Create a standard three.js project, then
 
 ```js
 //create a boundning box and new boids instance
-const box = new THREE.Box3(new THREE.Vector3(0,0,0),new THREE.Vector3(5,5,5)).setFromCenterAndSize()
+const box = new THREE.Box3(new THREE.Vector3(-5,-5,-5),new THREE.Vector3(5,5,5))
 const boids = new BOIDS(scene,box)
 
 //initiate the boid simulation
@@ -41,7 +41,7 @@ boids.initBoids(200)
 //add a mesh for the boids
 const geometry=new THREE.ConeGeometry(0.2,0.9,3)
 geometry.rotateX(-Math.PI * 0.5);
-const mesh= new THREE.Mesh(testGeometry,new THREE.MeshBasicMaterial({color:"blue"}))
+const mesh= new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:"blue"}))
 boids.setModelMesh(mesh,2)
 
 //initiate the boids vision and add objects to avoid
