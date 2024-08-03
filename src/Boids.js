@@ -5,15 +5,17 @@ import RayController from './vision/RayController';
 import Octree from './octree/Octree'
 import boidConfig from './boid.config';
 
-// Add the extension functions
-THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
-THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
-THREE.Mesh.prototype.raycast = acceleratedRaycast;
+
 
 export default class Boids
 {
     constructor(scene,container)
     {   
+        // Add the extension functions
+        THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
+        THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+        THREE.Mesh.prototype.raycast = acceleratedRaycast;
+        
         this.scene=scene
         this.container=container
         this.environmentObjects=[]
