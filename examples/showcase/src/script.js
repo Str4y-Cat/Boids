@@ -5,8 +5,8 @@ import Stats from 'three/addons/libs/stats.module.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import * as BACKGROUND from './background'
-// import Boids from 'three-boids';
-import Boids from '../../../src/Boids';
+import Boids from 'three-boids';
+// import Boids from '../../../src/Boids';
 
 console.log(Boids)
 
